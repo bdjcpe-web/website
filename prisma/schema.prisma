@@ -1,0 +1,66 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id                String    @id @default(cuid())
+  firstName         String
+  lastName          String
+  email             String    @unique
+  passwordHash      String
+  emailVerified     DateTime?
+  verificationToken String?   @unique
+  createdAt         DateTime  @default(now())
+  isMember          Boolean   @default(false)
+  filiere           String?
+  registeredYear    Int?
+  qrToken           String?   @unique
+  qrTokenAt         DateTime?
+
+  bookings          Booking[]
+  esportPlayers     Player[]
+}
+
+model Booking {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id])
+  date      DateTime
+  startTime String   // "14:00"
+  endTime   String   // "16:00"
+  status          String    @default("CONFIRMED")
+  agreedToRules   Boolean   @default(false)
+  rulesAcceptedAt DateTime?
+  createdAt       DateTime  @default(now())
+}
+
+model EsportTeam {
+  id      String   @id @default(cuid())
+  game    String   @unique
+  name    String
+  players Player[]
+}
+
+model Player {
+  id            String      @id @default(cuid())
+  teamId        String
+  team          EsportTeam  @relation(fields: [teamId], references: [id])
+  userId        String?
+  user          User?       @relation(fields: [userId], references: [id])
+  name          String
+  role          String
+  isSub         Boolean     @default(false)
+  gameId        String?
+  profileLink   String?
+  rankTier      String?
+  rankDivision  String?
+  createdAt     DateTime    @default(now())
+}
