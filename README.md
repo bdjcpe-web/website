@@ -1,36 +1,106 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# 🎮 BDJ - Architecture & Guide Technique
 
-## Getting Started
+Ce document détaille le fonctionnement interne de la plateforme du Bureau des Jeux (CPE Lyon). Il s'adresse aux développeurs souhaitant comprendre l'interaction entre les différentes couches de l'application.
 
-First, run the development server:
+---
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+## 🏛️ Architecture Globale (High-Level)
+
+L'application utilise **Next.js 15** avec le **App Router**. Contrairement aux architectures traditionnelles, les frontières entre le serveur et le client sont gérées au niveau des composants.
+
+```mermaid
+graph TD
+    User((Utilisateur)) <-->|Navigateur| Client[React Client Components]
+    Client <-->|Fetch / Actions| API[Next.js API Routes / Server Actions]
+    API <-->|Prisma Client| ORM[Prisma ORM]
+    ORM <-->|SQL Queries| DB[(SQLite Database)]
+    API <-->|Session Check| Auth[NextAuth.js]
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+---
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## 🖥️ Le Côté Serveur (The Backbone)
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+Le serveur gère la persistance des données, l'authentification et le rendu initial.
 
-## Learn More
+### 1. Server Components (`src/app/`)
+Par défaut, tous les fichiers dans `src/app/` sont des **Server Components**.
+- **Avantage** : Ils peuvent importer `prisma` directement sans exposer les secrets au client.
+- **Fonctionnement** : Le composant s'exécute côté serveur, récupère les données (`await prisma.user.findMany()`), et génère le HTML final envoyé au navigateur.
+- **Exemple** : La page `profil/page.tsx` récupère la session et les réservations en une seule passe serveur avant même que l'utilisateur ne voie la page.
 
-To learn more about Next.js, take a look at the following resources:
+### 2. API Routes (`src/app/api/`)
+Utilisées pour les opérations de modification (POST/DELETE) ou les services tiers.
+- **`getServerSession(authOptions)`** : La fonction clé pour vérifier l'identité de l'appelant côté serveur.
+- **Techno** : Routes handlers standard de Next.js (`export async function POST(req) { ... }`).
+- **Cas d'usage** : `/api/member/verify` pour invalider un QR code après scan.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+---
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## 🖌️ Le Côté Client (Interactivité)
 
-## Deploy on Vercel
+Défini par la directive `'use client'`, le côté client gère l'état de l'interface et les interactions riches.
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+### 1. État et Hooks
+- **`useState` & `useEffect`** : Utilisés pour la gestion locale (ex: ouvrir un modal, afficher un minuteur).
+- **`useSession()`** : Hook de NextAuth pour accéder aux infos de l'utilisateur connecté sans recharger la page.
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+### 2. Communication Client -> Serveur
+L'interaction se fait via des appels `fetch()` standard vers les API routes :
+```javascript
+// Exemple type dans un composant client
+const handleAction = async () => {
+  const res = await fetch('/api/local/book', { 
+    method: 'POST', 
+    body: JSON.stringify(data) 
+  });
+  if (res.ok) router.refresh(); // Force Next.js à re-fetch les Server Components
+};
+```
+
+---
+
+## 🗄️ Base de Données & Modèle de Données
+
+### 1. Prisma ORM : Le Pont
+Prisma transforme votre schéma de base de données en un client TypeScript auto-généré.
+- **Modèle de données** (`prisma/schema.prisma`) : La source unique de vérité.
+- **Prisma Client** (`src/lib/prisma.ts`) : Instance unique partagée pour éviter l'épuisement des connexions SQLite.
+
+### 2. Modèles Principaux & Relations
+- **`User`** : Le cœur du système. Relié à `Booking` (1:N) et `Player` (1:1 optionnel).
+- **`Booking`** : Gère les créneaux du local. Lié à un `User` via `userId`.
+- **`EsportTeam` & `Player`** : Structure en cascade. Une équipe possède plusieurs joueurs, qui peuvent être liés (ou non) à un compte `User` (pour les stats).
+
+### 3. SQLite : Persistance Légère
+Les données sont stockées dans `prisma/dev.db`. C'est un moteur relationnel complet, supportant les transactions (essentiel pour éviter les doubles réservations sur le même créneau).
+
+---
+
+## 🔐 Sécurité & Authentification
+
+### 1. Authentification Hybride (NextAuth)
+Le système d'authentification est le pivot de la sécurité :
+- **Provider** : `CredentialsProvider` gère la connexion via e-mail (CPE) et mot de passe (haché avec `bcryptjs`).
+- **Callback `authorize`** : Lors de la connexion, le serveur vérifie les identifiants, mais aussi si l'e-mail a été vérifié (`emailVerified`).
+- **Callbacks `jwt` & `session`** : Ces fonctions (dans `src/lib/auth.ts`) permettent de faire transiter des données personnalisées (comme `isMember` ou `id`) depuis la DB vers le token chiffré, puis vers la session accessible côté client.
+- **Stratégie** : JWT (JSON Web Token) chiffré stocké dans un cookie `httpOnly` (invisible pour le JS client, prévenant les attaques XSS).
+- **Validation** : Les routes sensibles vérifient `isMember` ou les emails d'admins stockés dans la variable d'environnement `ADMIN_EMAILS`.
+
+---
+
+## 🛠️ Exemples d'Interactions Techniques
+
+### Scénario : Génération du QR Code Membre
+1.  **Serveur** (`profil/page.tsx`) : Détecte si `user.isMember` est vrai.
+2.  **Client** (`MemberCard.tsx`) : Appelle `/api/member/qr`.
+3.  **API** (`/api/member/qr/route.ts`) :
+    - Vérifie la session.
+    - Génère un `qrToken` aléatoire via `crypto.randomBytes(32)`.
+    - Enregistre le token dans la DB via `prisma.user.update`.
+4.  **Client** : Reçoit le token et utilise `QRCodeSVG` pour le dessiner localement.
+
+### Scénario : Admin Dashboard (Migration)
+Le dashboard admin est passé de `le-local/` au `profil/`.
+- **Logique** : Le serveur filtre les `bookings` seulement si l'email de session est dans la liste des admins.
+- **Modèle** : Utilisation de `include: { user: true }` dans la requête Prisma pour récupérer les noms des étudiants en une seule jointure SQL performante.

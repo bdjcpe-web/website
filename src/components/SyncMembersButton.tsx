@@ -10,7 +10,7 @@ export default function SyncMembersButton() {
     try {
       const res = await fetch('/api/admin/sync-members', { method: 'POST' });
       const data = await res.json();
-      
+
       if (res.ok) {
         setStatus('success');
         setMessage(data.message);
@@ -28,8 +28,8 @@ export default function SyncMembersButton() {
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: '10px' }}>
-      <button 
-        onClick={handleSync} 
+      <button
+        onClick={handleSync}
         disabled={status === 'loading'}
         className="btn-pill btn-gold"
         style={{ padding: '12px 24px', fontSize: '0.9rem' }}
@@ -38,9 +38,9 @@ export default function SyncMembersButton() {
         {status === 'loading' ? 'Synchronisation...' : 'Synchroniser les membres'}
       </button>
       {message && (
-        <p style={{ 
-          fontSize: '0.8rem', 
-          fontWeight: 600, 
+        <p style={{
+          fontSize: '0.8rem',
+          fontWeight: 600,
           color: status === 'error' ? '#ff1a3c' : 'var(--c-gold)',
           margin: 0
         }}>

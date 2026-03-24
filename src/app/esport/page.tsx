@@ -300,7 +300,7 @@ export default function EsportPage() {
         })()}
 
         {/* ── JERSEY SECTION ── */}
-        <div style={{ borderTop: '2px solid rgba(255, 26, 60, 0.3)', borderBottom: '2px solid rgba(255, 26, 60, 0.3)', background: 'rgba(80,30,120,0.18)', padding: '0' }}>
+        <div style={{ borderTop: '2px solid rgba(255, 26, 60, 0.3)', borderBottom: '2px solid rgba(255, 26, 60, 0.3)', padding: '0' }}>
           <div className="container" style={{ padding: '60px 0', display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '80px', alignItems: 'center' }}>
             {/* Left: jersey with subtle gold glow */}
             <div style={{ position: 'relative', display: 'flex', justifyContent: 'center' }}>
@@ -312,8 +312,8 @@ export default function EsportPage() {
             </div>
             {/* Right: info */}
             <div>
-              <p style={{ fontSize: '0.75rem', fontWeight: 800, color: 'var(--c-gold)', letterSpacing: '0.25em', textTransform: 'uppercase', marginBottom: '12px' }}>Tenue officielle</p>
-              <h2 style={{ fontSize: 'clamp(2rem, 5vw, 3rem)', fontWeight: 950, color: '#fff', margin: '0 0 20px 0', lineHeight: 1.1 }}>Le Maillot BDJ Esport</h2>
+              <p style={{ fontSize: '0.75rem', fontWeight: 800, color: 'rgba(255,26,60,0.7)', letterSpacing: '0.25em', textTransform: 'uppercase', marginBottom: '12px' }}>Tenue officielle</p>
+              <h2 style={{ fontSize: 'clamp(2rem, 5vw, 3rem)', fontWeight: 950, color: '#fff', margin: '0 0 20px 0', lineHeight: 1.1 }}>Le <span style={{ color: '#ff1a3c' }}>Maillot</span> BDJ Esport</h2>
               <p style={{ color: 'rgba(255,255,255,0.55)', fontSize: '1rem', lineHeight: 1.8, marginBottom: '36px' }}>
                 Porté lors de toutes nos compétitions inter-écoles, notre maillot représente les couleurs du BDJ face aux meilleures équipes de France.
               </p>

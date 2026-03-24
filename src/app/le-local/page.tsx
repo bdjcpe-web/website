@@ -3,8 +3,6 @@ import CalendarBooking from '@/components/CalendarBooking';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth';
 import prisma from '@/lib/prisma';
-import CancelBookingButton from './CancelBookingButton';
-import SyncMembersButton from './SyncMembersButton';
 
 const equipment = [
   {
@@ -81,59 +79,6 @@ export default async function LocalPage() {
       <div className="container" style={{ paddingTop: '40px', paddingBottom: '80px' }}>
         {/* Booking Component */}
         <CalendarBooking />
-
-        {/* Admin Section */}
-        {isAdmin && (
-          <div style={{ marginTop: '100px', background: '#fff', borderRadius: '40px', padding: '30px', border: '1px solid rgba(0,0,0,0.05)', boxShadow: '0 30px 60px rgba(0,0,0,0.05)' }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '20px', marginBottom: '40px' }}>
-              <div style={{ padding: '15px', background: 'var(--c-bordeaux)', borderRadius: '15px' }}>
-                <i className="ph ph-lock-key" style={{ fontSize: '2rem', color: '#fff' }} />
-              </div>
-              <div>
-                <h2 style={{ fontSize: '1.8rem', fontWeight: 900, color: 'var(--c-bordeaux)', margin: 0 }}>Dashboard Admin</h2>
-                <p style={{ color: 'var(--c-grey-medium)', margin: 0 }}>Gestion des réservations du Local</p>
-              </div>
-              <div style={{ marginLeft: 'auto' }}>
-                <SyncMembersButton />
-              </div>
-            </div>
-
-            {bookings.length === 0 ? (
-              <div style={{ padding: '40px', textAlign: 'center', background: '#f9f9f9', borderRadius: '24px', color: 'var(--c-grey-medium)' }}>
-                Aucune réservation active.
-              </div>
-            ) : (
-              <div style={{ overflowX: 'auto' }}>
-                <table style={{ width: '100%', borderCollapse: 'separate', borderSpacing: '0 10px' }}>
-                  <thead>
-                    <tr style={{ color: 'var(--c-grey-medium)', fontSize: '0.8rem', textTransform: 'uppercase', letterSpacing: '0.1em' }}>
-                      <th style={{ padding: '15px', textAlign: 'left' }}>Date & Heure</th>
-                      <th style={{ padding: '15px', textAlign: 'left' }}>Étudiant</th>
-                      <th style={{ padding: '15px', textAlign: 'right' }}>Action</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {bookings.map(b => (
-                      <tr key={b.id} style={{ background: '#fcfcfc', border: '1px solid rgba(0,0,0,0.03)' }}>
-                        <td style={{ padding: '20px', borderRadius: '15px 0 0 15px' }}>
-                          <span style={{ fontWeight: 800 }}>{b.date.toLocaleDateString('fr-FR', { weekday: 'short', day: '2-digit', month: 'short' })}</span>
-                          <span style={{ marginLeft: '10px', padding: '4px 10px', background: 'var(--c-bordeaux)', color: '#fff', borderRadius: '8px', fontSize: '0.8rem' }}>{b.startTime} - {b.endTime}</span>
-                        </td>
-                        <td style={{ padding: '20px' }}>
-                          <p style={{ fontWeight: 700, margin: 0 }}>{b.user.firstName} {b.user.lastName}</p>
-                          <p style={{ fontSize: '0.8rem', color: 'var(--c-grey-medium)', margin: 0 }}>{b.user.email}</p>
-                        </td>
-                        <td style={{ padding: '20px', textAlign: 'right', borderRadius: '0 15px 15px 0' }}>
-                          <CancelBookingButton bookingId={b.id} />
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-            )}
-          </div>
-        )}
       </div>
 
       {/* ── EQUIPMENT ACCORDION ── */}

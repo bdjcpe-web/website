@@ -41,7 +41,7 @@ export default function Header() {
           {/* ── Crown / Cotisation CTA ── */}
           <Link href="/cotisation" className="crown-cta desktop-only" title="Devenir membre">
             <i className="ph-fill ph-crown" />
-            <span>Devenir Membre</span>
+            <span> {!session?.user?.isMember ? 'Avantages Membre' : 'Devenir Membre'}</span>
           </Link>
 
           {/* Profile Dropdown with Hover Persistence Bridge */}

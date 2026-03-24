@@ -64,3 +64,8 @@ model Player {
   rankDivision  String?
   createdAt     DateTime    @default(now())
 }
+
+model PendingMember {
+  email     String   @id @unique
+  createdAt DateTime @default(now())
+}

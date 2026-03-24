@@ -1,6 +1,6 @@
 'use client';
 import { useEffect, useState } from 'react';
-import { QRCodeSVG } from 'qrcode.react';
+import { QRCode } from 'react-qrcode-logo';
 
 type Props = {
   firstName: string;
@@ -56,7 +56,7 @@ export default function MemberCard({ firstName, lastName, filiere, registeredYea
           <img src="/bdj_logo.png" alt="BDJ" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
         </div>
         <div>
-          <p style={{ fontSize: '0.6rem', fontWeight: 800, color: 'rgba(200,155,60,0.8)', letterSpacing: '0.25em', textTransform: 'uppercase', margin: 0 }}>Bureau des Jeux · CPE Lyon</p>
+          <p style={{ fontSize: '0.6rem', fontWeight: 800, color: 'rgba(200,155,60,0.8)', letterSpacing: '0.25em', textTransform: 'uppercase', margin: 0 }}>Bureau des Jeux <br />· CPE Lyon</p>
           <p style={{ fontSize: '0.75rem', color: 'rgba(255,255,255,0.4)', margin: 0 }}>Carte de membre</p>
         </div>
         <div style={{ marginLeft: 'auto', display: 'flex', alignItems: 'center', gap: '6px', background: 'rgba(200,155,60,0.12)', border: '1px solid rgba(200,155,60,0.3)', borderRadius: '20px', padding: '4px 10px' }}>
@@ -79,40 +79,54 @@ export default function MemberCard({ firstName, lastName, filiere, registeredYea
       </div>
 
       {/* QR code */}
-      <div style={{ display: 'flex', gap: '20px', alignItems: 'flex-start' }}>
-        <div style={{ background: '#fff', borderRadius: '16px', padding: '12px', flexShrink: 0, position: 'relative' }}>
-          {loading ? (
-            <div style={{ width: '120px', height: '120px', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#9ca3af', fontSize: '0.8rem' }}>Chargement...</div>
-          ) : token ? (
-            <QRCodeSVG value={qrValue} size={120} level="H" />
-          ) : (
-            <div style={{ width: '120px', height: '120px', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#dc2626', fontSize: '0.75rem', textAlign: 'center' }}>Erreur QR</div>
-          )}
-          {/* Small BDJ logo center overlay */}
-          {token && (
-            <div style={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)', width: '28px', height: '28px', borderRadius: '50%', overflow: 'hidden', border: '2px solid #fff' }}>
-              <img src="/bdj_logo.png" alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
-            </div>
-          )}
-        </div>
+      <div style={{
+        width: '100%',
+        padding: '16px',
+        display: 'flex',
+        justifyContent: 'center',
+        background: 'linear-gradient(135deg, rgba(240, 196, 37, 0.1) 0%, rgba(212, 173, 31, 0.3) 100%)',
+        borderRadius: '24px',
+        border: '1px solid rgba(240, 196, 37, 0.3)'
+      }}>
+        {loading ? (
+          <div style={{ width: '120px', height: '120px', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#9ca3af', fontSize: '0.8rem' }}>Chargement...</div>
+        ) : token ? (
+          <QRCode
+            value={qrValue}
+            ecLevel="M"
+            size={300}                /* Taille de base haute résolution */
+            bgColor="transparent"     /* Fond transparent */
+            fgColor="#ffffff"         /* Points en blanc */
+            qrStyle="dots"            /* LE SECRET DES POINTS RONDS ! */
+            eyeRadius={12}            /* Arrondit les 3 gros repères dans les coins */
+            logoImage="/bdj_logo.png" /* La librairie gère ton logo toute seule ! */
+            logoPadding={10}           /* Espace entre le logo et le QR code */
+            logoPaddingStyle="circle" /* Découpe un cercle parfait autour du logo */
+            style={{ maxWidth: '100%', height: 'auto' }} /* Le rend responsive */
+          />
+        ) : (
+          <div style={{ width: '120px', height: '120px', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#dc2626', fontSize: '0.75rem', textAlign: 'center' }}>Erreur QR</div>
+        )}
+      </div>
 
-        <div style={{ flex: 1 }}>
-          <p style={{ fontSize: '0.75rem', fontWeight: 700, color: 'rgba(255,255,255,0.6)', lineHeight: 1.6, marginBottom: '12px' }}>
-            Présentez ce QR code à nos partenaires pour bénéficier de vos réductions exclusives.
+
+      {/* Explanations */}
+      <div>
+        <p style={{ fontSize: '0.75rem', fontWeight: 700, color: 'rgba(255,255,255,0.6)', lineHeight: 1.6, marginBottom: '12px' }}>
+          Présentez ce QR code à nos partenaires pour bénéficier de vos réductions exclusives.
+        </p>
+        <div style={{ background: 'rgba(255, 160, 0, 0.1)', border: '1px solid rgba(255,160,0,0.25)', borderRadius: '10px', padding: '10px 12px', marginBottom: '12px' }}>
+          <p style={{ fontSize: '0.68rem', color: 'rgba(255,160,0,0.9)', margin: 0, fontWeight: 600, lineHeight: 1.5 }}>
+            ⚠ Usage unique — ce QR est invalidé après chaque scan. Ne le partagez pas.
           </p>
-          <div style={{ background: 'rgba(255, 160, 0, 0.1)', border: '1px solid rgba(255,160,0,0.25)', borderRadius: '10px', padding: '10px 12px', marginBottom: '12px' }}>
-            <p style={{ fontSize: '0.68rem', color: 'rgba(255,160,0,0.9)', margin: 0, fontWeight: 600, lineHeight: 1.5 }}>
-              ⚠ Usage unique — ce QR est invalidé après chaque scan. Ne le partagez pas.
-            </p>
-          </div>
-          <button
-            onClick={() => { setRefreshing(true); fetchToken(); }}
-            disabled={refreshing}
-            style={{ fontSize: '0.72rem', background: 'rgba(255,255,255,0.08)', border: '1px solid rgba(255,255,255,0.15)', borderRadius: '8px', padding: '6px 12px', color: 'rgba(255,255,255,0.5)', cursor: 'pointer', fontWeight: 600 }}
-          >
-            {refreshing ? 'Actualisation...' : '↻ Actualiser'}
-          </button>
         </div>
+        <button
+          onClick={() => { setRefreshing(true); fetchToken(); }}
+          disabled={refreshing}
+          style={{ fontSize: '0.72rem', background: 'rgba(255,255,255,0.08)', border: '1px solid rgba(255,255,255,0.15)', borderRadius: '8px', padding: '6px 12px', color: 'rgba(255,255,255,0.5)', cursor: 'pointer', fontWeight: 600 }}
+        >
+          {refreshing ? 'Actualisation...' : '↻ Actualiser'}
+        </button>
       </div>
     </div>
   );

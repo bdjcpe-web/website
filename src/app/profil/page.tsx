@@ -5,6 +5,8 @@ import prisma from '@/lib/prisma';
 import Link from 'next/link';
 import CancelBookingButton from '../le-local/CancelBookingButton';
 import MemberCard from '@/components/MemberCard';
+import AddMemberForm from '@/components/AddMemberForm';
+import SyncMembersButton from '@/components/SyncMembersButton';
 
 export default async function ProfilPage() {
   const session = await getServerSession(authOptions);
@@ -26,6 +28,19 @@ export default async function ProfilPage() {
     redirect('/login');
   }
 
+  const adminEmails = (process.env.ADMIN_EMAILS || "").split(',').map(e => e.trim().toLowerCase());
+  const isAdmin = session?.user?.email && adminEmails.includes(session.user.email.toLowerCase());
+
+  let bookings: any[] = [];
+  if (isAdmin) {
+    bookings = await prisma.booking.findMany({
+      include: {
+        user: { select: { firstName: true, lastName: true, email: true } }
+      },
+      orderBy: { date: 'asc' }
+    });
+  }
+
   return (
     <div style={{ minHeight: '100vh', backgroundColor: '#fff', paddingTop: '160px', paddingBottom: '100px', position: 'relative', overflow: 'hidden' }}>
 
@@ -42,9 +57,8 @@ export default async function ProfilPage() {
             Bienvenue dans ton espace personnel, {user.firstName}.
           </p>
         </div>
-
         {/* ── 2-COLUMN LAYOUT ── */}
-        <div style={{ display: 'grid', gridTemplateColumns: user.isMember ? '1fr' : '1fr 380px', gap: '32px', alignItems: 'start' }}>
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 380px', gap: '32px', alignItems: 'start' }}>
 
           {/* ── LEFT COLUMN ── */}
           <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
@@ -92,23 +106,9 @@ export default async function ProfilPage() {
               </div>
               <div>
                 <h3 style={{ fontSize: '1.1rem', fontWeight: 900, color: user.isMember ? 'var(--c-gold)' : '#000', margin: 0 }}>{user.isMember ? 'MEMBRE VIP' : 'NON COTISANT'}</h3>
-                <p style={{ fontSize: '0.85rem', color: 'var(--c-grey-medium)', margin: '4px 0 0' }}>{user.isMember ? 'Accès illimité à tous les services' : 'Rejoins le BDJ pour accéder à tous les avantages'}</p>
+                <p style={{ fontSize: '0.85rem', color: 'var(--c-grey-medium)', margin: '4px 0 0' }}>{user.isMember ? (<>Accès à tous les <Link href="/cotisation" style={{ color: 'var(--c-gold)', fontWeight: 700, textDecoration: 'underline' }}>avantages</Link> de la cotiz !</>) : 'Rejoins le BDJ pour accéder à tous les avantages'}</p>
               </div>
             </div>
-
-            {/* BOX 2b: MEMBER CARD (QR) */}
-            {user.isMember && (
-              <div>
-                <p style={{ fontSize: '0.7rem', fontWeight: 800, color: 'var(--c-bordeaux)', letterSpacing: '0.2em', textTransform: 'uppercase', marginBottom: '14px' }}>Carte de membre</p>
-                <MemberCard
-                  firstName={user.firstName}
-                  lastName={user.lastName}
-                  filiere={(user as any).filiere}
-                  registeredYear={(user as any).registeredYear}
-                  memberSince={user.createdAt.toISOString()}
-                />
-              </div>
-            )}
 
             {/* BOX 3: RESERVATIONS */}
             <div style={{ background: '#fff', borderRadius: '32px', padding: '36px', border: '1px solid rgba(0,0,0,0.05)', boxShadow: '0 8px 24px rgba(0,0,0,0.03)' }}>
@@ -143,46 +143,122 @@ export default async function ProfilPage() {
               )}
             </div>
 
-          </div>
+          </div> {/* <-- FIN DE LA COLONNE DE GAUCHE */}
 
-          {/* ── RIGHT COLUMN: JOIN CTA (only for non-members) ── */}
-          {!user.isMember && (
-            <div id="cotisation-info" style={{ position: 'sticky', top: '100px', background: 'var(--c-bordeaux)', borderRadius: '32px', padding: '40px', color: '#fff' }}>
-              <h2 style={{ fontSize: '1.8rem', fontWeight: 900, margin: '0 0 12px 0', lineHeight: 1.2 }}>DEVIENS MEMBRE</h2>
-              <p style={{ fontSize: '0.95rem', opacity: 0.8, marginBottom: '28px', lineHeight: 1.6 }}>
-                Soutiens ton bureau des jeux et profite d'avantages exclusifs toute l'année.
-              </p>
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '14px', marginBottom: '32px' }}>
-                {[
-                  { icon: 'ph-trophy', t: 'Pôle Esport', d: 'Accès aux compétitions' },
-                  { icon: 'ph-armchair', t: 'Le Local', d: 'Réservations prioritaires' },
-                  { icon: 'ph-confetti', t: 'Événements', d: 'Tarifs réduits' },
-                  { icon: 'ph-arrow-right', t: 'Et bien plus encore…', d: 'Clique pour voir tous les avantages' }
-                ].map(item => (
-                  <div key={item.t} style={{ display: 'flex', gap: '14px', alignItems: 'center' }}>
-                    <div style={{ width: '40px', height: '40px', background: 'rgba(255,255,255,0.1)', borderRadius: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
-                      <i className={`ph ${item.icon}`} style={{ fontSize: '1.3rem' }} />
-                    </div>
-                    <div>
-                      <p style={{ fontWeight: 800, margin: 0, fontSize: '0.9rem' }}>{item.t}</p>
-                      <p style={{ fontSize: '0.75rem', opacity: 0.7, margin: 0 }}>{item.d}</p>
-                    </div>
-                  </div>
-                ))}
+
+          {/* ── RIGHT COLUMN (STICKY) ── */}
+          <div style={{ position: 'sticky', top: '100px' }}>
+
+            {/* MEMBER CARD (Si cotisant) */}
+            {user.isMember ? (
+              <div style={{ display: 'flex', top: '100px', flexDirection: 'column', gap: '14px' }}>
+                <p style={{ fontSize: '0.7rem', fontWeight: 800, color: 'var(--c-bordeaux)', letterSpacing: '0.2em', textTransform: 'uppercase', marginBottom: '0' }}>Carte de membre</p>
+                <MemberCard
+                  firstName={user.firstName}
+                  lastName={user.lastName}
+                  filiere={(user as any).filiere}
+                  registeredYear={(user as any).registeredYear}
+                  memberSince={user.createdAt.toISOString()}
+                />
               </div>
-              <div style={{ borderTop: '1px solid rgba(255,255,255,0.15)', paddingTop: '24px', textAlign: 'center' }}>
-                <p style={{ fontSize: '3rem', fontWeight: 900, margin: '0 0 4px' }}>10€</p>
-                <p style={{ fontSize: '0.8rem', opacity: 0.7, marginBottom: '20px' }}>Cotisation annuelle</p>
-                <Link href="/cotisation" className="btn btn-gold" style={{ width: '100%', display: 'inline-block', textDecoration: 'none', textAlign: 'center' }}>EN SAVOIR PLUS</Link>
+            ) : (
+              <div id="cotisation-info" style={{ background: 'var(--c-bordeaux)', borderRadius: '32px', padding: '40px', color: '#fff' }}>
+                <h2 style={{ fontSize: '1.8rem', fontWeight: 900, margin: '0 0 12px 0', lineHeight: 1.2 }}>DEVIENS MEMBRE</h2>
+                <p style={{ fontSize: '0.95rem', opacity: 0.8, marginBottom: '28px', lineHeight: 1.6 }}>
+                  Soutiens ton bureau des jeux et profite d'avantages exclusifs toute l'année.
+                </p>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '14px', marginBottom: '32px' }}>
+                  {[
+                    { icon: 'ph-trophy', t: 'Pôle Esport', d: 'Accès aux compétitions' },
+                    { icon: 'ph-armchair', t: 'Le Local', d: 'Réservations prioritaires' },
+                    { icon: 'ph-confetti', t: 'Événements', d: 'Tarifs réduits' },
+                    { icon: 'ph-arrow-right', t: 'Et bien plus encore…', d: 'Clique pour voir tous les avantages' }
+                  ].map(item => (
+                    <div key={item.t} style={{ display: 'flex', gap: '14px', alignItems: 'center' }}>
+                      <div style={{ width: '40px', height: '40px', background: 'rgba(255,255,255,0.1)', borderRadius: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                        <i className={`ph ${item.icon}`} style={{ fontSize: '1.3rem' }} />
+                      </div>
+                      <div>
+                        <p style={{ fontWeight: 800, margin: 0, fontSize: '0.9rem' }}>{item.t}</p>
+                        <p style={{ fontSize: '0.75rem', opacity: 0.7, margin: 0 }}>{item.d}</p>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+                <div style={{ borderTop: '1px solid rgba(255,255,255,0.15)', paddingTop: '24px', textAlign: 'center' }}>
+                  <p style={{ fontSize: '3rem', fontWeight: 900, margin: '0 0 4px' }}>10€</p>
+                  <p style={{ fontSize: '0.8rem', opacity: 0.7, marginBottom: '20px' }}>Cotisation annuelle</p>
+                  <Link href="/cotisation" className="btn btn-gold" style={{ width: '100%', display: 'inline-block', textDecoration: 'none', textAlign: 'center' }}>EN SAVOIR PLUS</Link>
+                </div>
               </div>
-            </div>
-          )}
+            )}
+
+          </div> {/* <-- FIN DE LA COLONNE DE DROITE */}
 
         </div>
 
-      </div>
+        {/* Admin Section */}
+        {isAdmin && (
+          <div style={{ marginTop: '100px', background: '#fff', borderRadius: '40px', padding: '30px', border: '1px solid rgba(0,0,0,0.05)', boxShadow: '0 30px 60px rgba(0,0,0,0.05)' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '20px', marginBottom: '40px' }}>
+              <div style={{ padding: '15px', background: 'var(--c-bordeaux)', borderRadius: '15px' }}>
+                <i className="ph ph-lock-key" style={{ fontSize: '2rem', color: '#fff' }} />
+              </div>
+              <div>
+                <h2 style={{ fontSize: '1.8rem', fontWeight: 900, color: 'var(--c-bordeaux)', margin: 0 }}>Dashboard Admin</h2>
+                <p style={{ color: 'var(--c-grey-medium)', margin: 0 }}>Gestion des réservations du Local</p>
+              </div>
+            </div>
 
-      <style>{`
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '10px', marginBottom: '40px' }}>
+              <AddMemberForm />
+              <div className="admin-form-container">
+                <h3 className="admin-form-title">Synchronisation Automatique</h3>
+                <p style={{ fontSize: '0.9rem', color: 'var(--c-grey-medium)', lineHeight: 1.5, marginBottom: '20px' }}>
+                  Récupérez instantanément la liste des cotisants depuis HelloAsso pour mettre à jour les droits d'accès.
+                </p>
+                <SyncMembersButton />
+              </div>
+            </div>
+
+            {bookings.length === 0 ? (
+              <div style={{ padding: '40px', textAlign: 'center', background: '#f9f9f9', borderRadius: '24px', color: 'var(--c-grey-medium)' }}>
+                Aucune réservation active.
+              </div>
+            ) : (
+              <div style={{ overflowX: 'auto' }}>
+                <table style={{ width: '100%', borderCollapse: 'separate', borderSpacing: '0 10px' }}>
+                  <thead>
+                    <tr style={{ color: 'var(--c-grey-medium)', fontSize: '0.8rem', textTransform: 'uppercase', letterSpacing: '0.1em' }}>
+                      <th style={{ padding: '15px', textAlign: 'left' }}>Date & Heure</th>
+                      <th style={{ padding: '15px', textAlign: 'left' }}>Étudiant</th>
+                      <th style={{ padding: '15px', textAlign: 'right' }}>Action</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {bookings.map(b => (
+                      <tr key={b.id} style={{ background: '#fcfcfc', border: '1px solid rgba(0,0,0,0.03)' }}>
+                        <td style={{ padding: '20px', borderRadius: '15px 0 0 15px' }}>
+                          <span style={{ fontWeight: 800 }}>{b.date.toLocaleDateString('fr-FR', { weekday: 'short', day: '2-digit', month: 'short' })}</span>
+                          <span style={{ marginLeft: '10px', padding: '4px 10px', background: 'var(--c-bordeaux)', color: '#fff', borderRadius: '8px', fontSize: '0.8rem' }}>{b.startTime} - {b.endTime}</span>
+                        </td>
+                        <td style={{ padding: '20px' }}>
+                          <p style={{ fontWeight: 700, margin: 0 }}>{b.user.firstName} {b.user.lastName}</p>
+                          <p style={{ fontSize: '0.8rem', color: 'var(--c-grey-medium)', margin: 0 }}>{b.user.email}</p>
+                        </td>
+                        <td style={{ padding: '20px', textAlign: 'right', borderRadius: '0 15px 15px 0' }}>
+                          <CancelBookingButton bookingId={b.id} />
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            )}
+          </div>
+        )}
+
+        <style>{`
         @media (max-width: 900px) {
           .container { padding: 0 20px; }
           div[style*="grid-template-columns: repeat(3, 1fr)"] {
@@ -206,6 +282,7 @@ export default async function ProfilPage() {
           }
         }
       `}</style>
+      </div>
     </div>
   );
 }

@@ -1,11 +1,10 @@
-@import "tailwindcss";
-
 :root {
   /* BDJ Brand Colors */
   --c-bordeaux: #6D0C24;
   --c-bordeaux-dark: #4A0818;
   --c-gold: #F0C425;
   --c-gold-dark: #D4AD1F;
+  --c-gold-light: #F0C425;
   --c-white: #ffffff;
   --c-black: #000000;
   --c-grey-light: #f3f4f6;
@@ -382,8 +381,8 @@ a {
   color: #1a0a00;
   background: linear-gradient(135deg, #f5d06a 0%, #c89b3c 40%, #f5d06a 60%, #c89b3c 100%);
   background-size: 200% auto;
-  border: 1.5px solid rgba(255,255,255,0.3);
-  box-shadow: 0 4px 16px rgba(200,155,60,0.4), inset 0 1px 0 rgba(255,255,255,0.4);
+  border: 1.5px solid rgba(255, 255, 255, 0.3);
+  box-shadow: 0 4px 16px rgba(200, 155, 60, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.4);
   letter-spacing: 0.03em;
   transition: transform 0.2s, box-shadow 0.2s, background-position 0.4s;
   animation: shimmer-crown 3s linear infinite;
@@ -391,15 +390,101 @@ a {
 
 .crown-cta:hover {
   transform: translateY(-2px) scale(1.03);
-  box-shadow: 0 8px 24px rgba(200,155,60,0.5), inset 0 1px 0 rgba(255,255,255,0.5);
+  box-shadow: 0 8px 24px rgba(200, 155, 60, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.5);
 }
 
 @keyframes shimmer-crown {
-  0% { background-position: 200% center; }
-  100% { background-position: -200% center; }
+  0% {
+    background-position: 200% center;
+  }
+
+  100% {
+    background-position: -200% center;
+  }
 }
 
 .img-dark-hover:hover {
   filter: brightness(0.9);
   transform: scale(1.03) translateZ(0);
+}
+
+/* ── Admin Form (Composant d'ajout de membre) ── */
+.admin-form-container {
+  background-color: var(--c-white);
+  border: 1px solid var(--c-grey-light);
+  border-radius: 24px;
+  /* On reste raccord avec tes card-event */
+  padding: 32px;
+  max-width: 450px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+}
+
+.admin-form-title {
+  font-family: var(--font-heading);
+  color: var(--c-bordeaux);
+  font-size: 1.5rem;
+  font-weight: 900;
+  margin-bottom: 24px;
+}
+
+.admin-form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.admin-form-label {
+  display: block;
+  font-weight: 700;
+  font-size: 0.95rem;
+  color: var(--c-grey-dark);
+  margin-bottom: 8px;
+}
+
+.admin-form-input {
+  width: 100%;
+  padding: 14px 20px;
+  border: 2px solid var(--c-grey-light);
+  border-radius: 12px;
+  font-family: var(--font-body);
+  font-size: 1rem;
+  color: var(--c-grey-dark);
+  transition: border-color 0.2s, box-shadow 0.2s;
+  outline: none;
+}
+
+.admin-form-input:focus {
+  border-color: var(--c-bordeaux);
+  box-shadow: 0 0 0 4px rgba(109, 12, 36, 0.1);
+}
+
+.admin-form-message {
+  margin-top: 20px;
+  padding: 16px;
+  border-radius: 12px;
+  font-weight: 600;
+  font-size: 0.95rem;
+  text-align: center;
+}
+
+/* On utilise tes couleurs pastel pour les messages ! */
+.admin-form-message.success {
+  background-color: var(--c-sorties);
+  /* Ton vert pastel */
+  color: #2b4522;
+}
+
+.admin-form-message.error {
+  background-color: rgba(255, 0, 77, 0.15);
+  /* Ton rouge esport adouci */
+  color: var(--c-esport);
+  border: 1px solid var(--c-esport);
+}
+
+/* État désactivé pour tes boutons globaux */
+.btn:disabled {
+  background-color: var(--c-grey-medium);
+  cursor: not-allowed;
+  transform: none !important;
+  box-shadow: none !important;
 }

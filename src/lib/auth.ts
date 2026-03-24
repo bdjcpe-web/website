@@ -45,6 +45,28 @@ export const authOptions: NextAuthOptions = {
       }
     })
   ],
+  events: {
+    // Se déclenche UNE SEULE FOIS quand un nouvel utilisateur se connecte pour la première fois
+    async createUser({ user }) {
+      if (user.email) {
+        const email = user.email.toLowerCase();
+        // On regarde s'il est dans la salle d'attente
+        const isPending = await prisma.pendingMember.findUnique({ where: { email } });
+
+        if (isPending) {
+          // On le passe membre !
+          await prisma.user.update({
+            where: { id: user.id },
+            data: { isMember: true }
+          });
+          // On le retire de la salle d'attente pour faire le ménage
+          await prisma.pendingMember.delete({ where: { email } });
+
+          console.log(`Nouvel inscrit pré-approuvé passé membre : ${email}`);
+        }
+      }
+    }
+  },
   callbacks: {
     async jwt({ token, user }) {
       if (user) {
