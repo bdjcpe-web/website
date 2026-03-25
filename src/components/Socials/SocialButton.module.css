@@ -1,0 +1,75 @@
+/**
+ * @file src/components/Socials/SocialButton.module.css
+ * @author Loann Cordel - Président du BDJ
+ * @date 25/03/2026
+ * @description Styles pour le composant SocialButton. Gère les variantes de couleurs et de formes.
+ */
+
+/* ── STYLE DE BASE COMMUN ── */
+.socialBtn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    transition: filter 0.2s ease-in-out, transform 0.1s ease-in-out;
+    border: none;
+    cursor: pointer;
+    color: var(--c-white);
+    text-decoration: none;
+    /* Empêche le bouton de rétrécir si le texte est long dans un Flex/Grid parent */
+    flex-shrink: 0;
+}
+
+.socialBtn:hover {
+    filter: brightness(1.1);
+}
+
+.socialBtn:active {
+    transform: scale(0.97);
+}
+
+/* ── COULEURS DES PLATEFORMES ── */
+.discord {
+    background: var(--c-discord);
+}
+
+.whatsapp {
+    background: var(--c-whatsapp);
+}
+
+/* ── VARIANTE 1 : Texte + Icône (Par défaut) ── */
+.default {
+    border-radius: 12px;
+    padding: 0.625rem 1.25rem;
+    gap: 0.625rem;
+}
+
+.label {
+    font-weight: 600;
+    font-size: 0.9375rem;
+    letter-spacing: 0.01em;
+}
+
+/* ── VARIANTE 2 : Icône Seule (Ronde) ── */
+.round {
+    border-radius: 50%;
+    /* Crée le cercle */
+    padding: 0;
+    /* Pas de padding pour un contrôle total des dimensions */
+
+    /* Pour un cercle parfait, la largeur doit être égale à la hauteur */
+    width: 2.75rem;
+    /* 44px : Taille standard d'une zone tactile confortable */
+    height: 2.75rem;
+}
+
+/* Style spécifique de l'icône à l'intérieur du bouton */
+.icon {
+    font-size: 1.25rem;
+    /* 20px */
+}
+
+/* Ajustement de l'icône dans la variante ronde pour un centrage visuel parfait */
+.round .icon {
+    font-size: 1.375rem;
+    /* Légèrement plus grande (22px) pour compenser l'absence de texte */
+}

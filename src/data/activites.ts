@@ -12,8 +12,19 @@ export type Activite = {
 
 export const activites: Activite[] = [
   {
+    slug: 'local',
+    title: 'Le Local',
+    tagline: 'Canapé, consoles, jeux, micro-ondes...\nL\'endroit parfait pour kiffer avec tes potes !',
+    description: 'Le local du BDJ est l\'endroit parfait pour se détendre et s\'amuser entre amis. Que tu sois un joueur aguerri ou un débutant, tu trouveras de quoi t\'occuper.',
+    details: [],
+    icon: 'ph-armchair',
+    color: 'var(--c-local)',
+    bgClass: 'bg-local',
+    image: '/activities/local.jpg',
+  },
+  {
     slug: 'jdr',
-    title: 'Société & JDR',
+    title: 'Jeux & JDR',
     tagline: 'Jeux de sociétés, aventures épiques et soirées inoubliables',
     description: 'Le pôle Jeux de Rôle et Jeux de Société du BDJ anime la vie étudiante autour de parties endiablées. Que tu sois un vétéran des tables de D&D ou un néophyte curieux, tu trouveras ta communauté ici.',
     details: [
@@ -24,7 +35,7 @@ export const activites: Activite[] = [
       'Tournois saisonniers avec lots',
     ],
     icon: 'ph-dice-five',
-    color: '#DDBEA9',
+    color: 'var(--c-jdr)',
     bgClass: 'bg-jdr',
     image: '/activities/jdr.jpg',
   },
@@ -40,7 +51,7 @@ export const activites: Activite[] = [
       'Initiation pour les débutants',
     ],
     icon: 'ph-spade',
-    color: '#a2d2ff',
+    color: 'var(--c-poker)',
     bgClass: 'bg-poker',
     image: '/activities/poker.jpg',
   },
@@ -57,7 +68,7 @@ export const activites: Activite[] = [
       'Ouvert à tous, membres et non-membres',
     ],
     icon: 'ph-bowling-ball',
-    color: '#2A7A4B',
+    color: 'var(--c-sorties)',
     bgClass: 'bg-sorties',
     image: '/activities/billiard.jpg',
   },
@@ -75,7 +86,7 @@ export const activites: Activite[] = [
       'Fun, cris et mauvaise foi garantis'
     ],
     icon: 'ph-game-controller',
-    color: '#C8B6FF',
+    color: 'var(--c-gaming)',
     bgClass: 'bg-gaming',
     image: '/activities/gaming.avif',
   },

@@ -1,3 +1,11 @@
+/**
+ * @file src/app/globals.css
+ * @author Loann Cordel - Président du BDJ
+ * @date 24/03/2026
+ * @description Styles et variables globales pour l'application.
+ */
+
+/* ── Variables Globales ── */
 :root {
   /* BDJ Brand Colors */
   --c-bordeaux: #6D0C24;
@@ -12,12 +20,26 @@
   --c-grey-dark: #111827;
 
   /* Pole Pastel Themes */
-  --c-jdr: #DDBEA9;
+  --c-jdr: #cda68c;
   --c-poker: #a2d2ff;
-  --c-sorties: #ccd5ae;
+  --c-sorties: #4CAF50;
   --c-gaming: #C8B6FF;
   --c-local: #e6d5b8;
   --c-esport: #FF004D;
+
+  /* Socials Colors */
+  --c-discord: #5865F2;
+  --c-discord-dark: #21265a;
+  --c-whatsapp: #25D366;
+  --c-whatsapp-dark: #128c39;
+  --c-instagram: #E1306C;
+  --c-instagram-dark: #a31f4e;
+  --c-tiktok: #000000;
+  --c-tiktok-dark: #000000;
+  --c-youtube: #ff0000;
+  --c-youtube-dark: #b30000;
+  --c-twitch: #914FFF;
+  --c-twitch-dark: #642fcc;
 
   /* Fonts */
   --font-heading: 'Outfit', 'Inter', sans-serif;
@@ -45,6 +67,14 @@ body {
   -webkit-font-smoothing: antialiased;
 }
 
+/* ── Visibility Utilities ── */
+@media (max-width: 768px) {
+  .hide-on-mobile {
+    /* !important s'assure que l'utilitaire est appliqué malgré les styles de base du composant. */
+    display: none !important;
+  }
+}
+
 /* Utility Containers */
 .container {
   width: 100%;
@@ -61,13 +91,24 @@ body {
   margin: 100px 0;
 }
 
-/* ── Typography ── */
-.title-hero {
-  font-family: var(--font-heading);
-  font-weight: 950;
-  line-height: 0.85;
-  letter-spacing: -0.04em;
-  color: var(--c-white);
+/* ── Layout Utilities ── */
+.stack {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+  /* Équivalent de 20px */
+}
+
+.stack-large {
+  display: flex;
+  flex-direction: column;
+  gap: 2.5rem;
+  /* Équivalent de 40px */
+}
+
+/* ── Text Utilities ── */
+.text-center {
+  text-align: center;
 }
 
 .section-title {

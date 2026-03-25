@@ -1,0 +1,102 @@
+/**
+ * @file src/components/Hero/Hero.module.css
+ * @author Loann Cordel - Président du BDJ
+ * @date 24/03/2026
+ * @architecture Client Component
+ * @description Styles CSS pour les sections Hero du site du BDJ CPE Lyon.
+ */
+
+/* ── HERO SECTION ── */
+.heroSection {
+    position: relative;
+    max-height: 85vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    padding: 150px 0;
+}
+
+/* Background image */
+.heroBg {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center 30%;
+    filter: brightness(0.4);
+    z-index: 1;
+}
+
+/* Dégradé par-dessus */
+.heroGradient {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(to bottom, rgba(0, 0, 0, 0.6), transparent, rgba(0, 0, 0, 0.4));
+    z-index: 2;
+}
+
+/* Contenu central */
+.heroContent {
+    position: relative;
+    z-index: 10;
+    text-align: center;
+    margin-top: 10%;
+}
+
+/* Gros titre */
+.heroTitle {
+    font-size: clamp(3rem, 10vw, 6rem);
+    font-family: var(--font-heading);
+    font-weight: 950;
+    line-height: 0.85;
+    letter-spacing: -0.04em;
+    color: #fff;
+}
+
+/* Petite ligne de séparation */
+.heroDivider {
+    width: 100px;
+    height: 1.5px;
+    background: #fff;
+    margin: 30px auto;
+}
+
+/* Sous-titre */
+.heroSubtitle {
+    font-size: 1.25rem;
+    color: rgba(255, 255, 255, 0.9);
+    max-width: 600px;
+    margin: 0 auto 40px;
+    font-weight: 400;
+}
+
+/* Responsive (Mobile) */
+@media (max-width: 768px) {
+    .heroSection {
+        padding-top: 80px;
+        padding-bottom: 50px;
+    }
+
+    .heroContent {
+        margin-top: 0;
+        /* On centre mieux sur mobile */
+        padding: 0 20px;
+        /* On évite que le texte touche les bords */
+    }
+
+    .heroTitle {
+        /* clamp() fait déjà pas mal le boulot, mais on peut ajuster si besoin */
+        font-size: 2.5rem;
+    }
+
+    .heroSubtitle {
+        font-size: 1.1rem;
+        margin-bottom: 30px;
+    }
+
+    .heroDivider {
+        margin: 15px auto;
+    }
+}

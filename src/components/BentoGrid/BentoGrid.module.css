@@ -1,0 +1,176 @@
+/**
+ * @file src/components/BentoGrid/BentoGrid.module.css
+ * @author Loann Cordel - Président du BDJ
+ * @date 25/03/2026
+ * @description Styles de la grille Bento.
+ */
+
+/* ── CONTENEUR DE LA GRILLE ── */
+.bentoContainer {
+    display: grid;
+    /* 4 colonnes */
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1.5rem;
+    margin-top: 3rem;
+}
+
+/* ── CLASSES DE LAYOUT (SPANS) ── */
+.largeSquare {
+    grid-column: span 2;
+    grid-row: span 2;
+    /* Force un rectangle */
+    aspect-ratio: 1 / 0.9;
+}
+
+.smallSquare {
+    grid-column: span 1;
+    grid-row: span 1;
+    aspect-ratio: 1 / 0.9;
+}
+
+/* ── LA CARTE (Le Conteneur) ── */
+.bentoCard {
+    position: relative;
+    display: block;
+    /* Nécessaire pour le Link */
+    border: 2.5px solid var(--theme-color);
+    border-radius: 1.5rem;
+    overflow: hidden;
+    text-decoration: none;
+
+    /* Animation fluide de l'élévation et de l'ombre */
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+
+    /* Force le contexte d'empilement (z-index) pour isoler la carte */
+    isolation: isolate;
+}
+
+/* L'effet de soulèvement ! */
+.bentoCard:hover {
+    transform: translateY(-6px);
+    /* On utilise l'ombre colorée injectée par React */
+    box-shadow: 0 12px 30px -10px var(--theme-shadow);
+}
+
+/* ── L'ARRIÈRE-PLAN (Image + Overlay) ── */
+.bgImage {
+    position: absolute;
+    inset: 0;
+    /* Prend 100% de la largeur et hauteur */
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    z-index: -2;
+    /* Tout au fond */
+    transition: transform 0.5s ease;
+}
+
+/* Optionnel : petit zoom de l'image au survol */
+.bentoCard:hover .bgImage {
+    transform: scale(1.05);
+}
+
+.overlay {
+    position: absolute;
+    inset: 0;
+    /* Un beau dégradé sombre qui part du bas (très noir pour lire le texte) vers le haut (plus transparent) */
+    background: linear-gradient(to top, rgba(0, 0, 0, 0.8) 0%, rgba(0, 0, 0, 0.5) 50%, rgba(0, 0, 0, 0.3) 100%);
+    z-index: -1;
+}
+
+/* ── ÉLÉMENTS VISUELS ── */
+.iconTopLeft {
+    position: absolute;
+    top: 1.5rem;
+    left: 1.5rem;
+    font-size: 2rem;
+    color: var(--theme-color);
+}
+
+/* ── LE CONTENU TEXTUEL (En bas) ── */
+.content {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    /* Pousse tout en bas */
+    height: 100%;
+    padding: 1.5rem;
+    color: white;
+    /* Le texte est blanc sur le fond sombre */
+}
+
+.title {
+    font-size: 1.5rem;
+    font-weight: 800;
+    margin-bottom: 0.25rem;
+    letter-spacing: 0.05em;
+}
+
+.desc {
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: rgba(255, 255, 255, 0.85);
+    line-height: 1.4;
+    margin-bottom: 0.5rem;
+
+    /* Coupe à 2 lignes proprement avec "..." */
+    white-space: pre-line;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+/* ── LA LIGNE ANIMÉE ── */
+.animatedLine {
+    height: 4px;
+    width: 30%;
+    /* Largeur de base */
+    background: var(--theme-color);
+    border-radius: 2px;
+    transition: width 0.2s ease-out;
+    /* Animation fluide de la largeur */
+    margin: 0 auto;
+}
+
+/* Au survol de la carte, la ligne prend 100% de la largeur */
+.bentoCard:hover .animatedLine {
+    width: 80%;
+}
+
+/* ── RESPONSIVE ── */
+/* On utilise 1000px comme point de bascule pour éviter les incohérences visuelles. */
+@media (max-width: 1000px) {
+    .bentoContainer {
+        /* On passe la grille en 2 colonnes */
+        grid-template-columns: repeat(2, 1fr);
+        margin-top: 2rem;
+    }
+
+    .largeSquare {
+        /* Le Local prend toute la largeur (les 2 colonnes) */
+        grid-column: span 2;
+        grid-row: span 1;
+        /* Il n'est plus un carré, il devient un rectangle (ratio 2 pour 1) */
+        aspect-ratio: 2 / 1;
+    }
+
+    .smallSquare {
+        /* Les petits pôles restent sur 1 colonne.
+           Grâce à aspect-ratio: 1/1, ils restent des carrés parfaits 
+           et forment naturellement une grille 2x2 en dessous du Local ! */
+        grid-column: span 1;
+        grid-row: span 1;
+        aspect-ratio: 1 / 1;
+    }
+
+    .title {
+        font-size: 1rem;
+        margin-bottom: 0;
+    }
+
+    .desc {
+        font-size: 0.6rem;
+    }
+}

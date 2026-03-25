@@ -104,3 +104,33 @@ Le système d'authentification est le pivot de la sécurité :
 Le dashboard admin est passé de `le-local/` au `profil/`.
 - **Logique** : Le serveur filtre les `bookings` seulement si l'email de session est dans la liste des admins.
 - **Modèle** : Utilisation de `include: { user: true }` dans la requête Prisma pour récupérer les noms des étudiants en une seule jointure SQL performante.
+
+---
+
+## 📂 Structure du Projet (Tree View)
+
+```bash
+BDJ
+├── prisma/                 # Configuration BDD & Migrations
+│   ├── dev.db              # SQLite Database
+│   └── schema.prisma       # Modèles de données (Source of truth)
+├── public/                 # Assets statiques (Photos, Icons)
+├── src/
+│   ├── app/                # Next.js App Router (Pages & API)
+│   │   ├── api/            # Route Handlers (Back-end)
+│   │   ├── le-local/       # Module de réservation
+│   │   ├── profil/         # Espace utilisateur & Admin Dashboard
+│   │   ├── layout.tsx      # Structure globale (Header/Footer)
+│   │   └── page.tsx        # Landing Page
+│   ├── components/         # Composants UI réutilisables (React)
+│   │   ├── MemberCard.tsx  # Carte de fidélité dynamique
+│   │   ├── Header.tsx      # Barre de navigation
+│   │   └── ...
+│   ├── lib/                # Configs & instances partagées
+│   │   ├── auth.ts         # Logique NextAuth
+│   │   └── prisma.ts       # Singleton Prisma Client
+│   └── data/               # Données statiques ou mockées
+├── package.json            # Dépendances & scripts
+├── tsconfig.json           # Config TypeScript
+└── next.config.ts          # Config Next.js
+```

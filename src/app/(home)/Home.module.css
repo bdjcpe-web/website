@@ -1,0 +1,104 @@
+/**
+ * @file src/app/Home.module.css
+ * @author Loann Cordel - Président du BDJ
+ * @date 25/03/2026
+ * @description Styles de mise en page (layout) pour la page d'accueil.
+ */
+
+/* Events Container */
+.eventsContainer {
+    /* Limite la largeur de la liste pour une meilleure lecture sur grand écran */
+    max-width: 56.25rem;
+    /* Centre le bloc horizontalement et ajoute l'espacement avec le titre */
+    margin: 3.75rem auto 0;
+}
+
+.eventsFooter {
+    margin-top: 2.5rem;
+}
+
+/* Bento Grid */
+.bentoGrid {
+    display: grid;
+    gap: 1.5rem;
+    margin-top: 4rem;
+}
+
+.lineDivider {
+    width: 60%;
+    height: 2px;
+    background-color: var(--c-bordeaux);
+    border-radius: 10px;
+    margin: 0 auto;
+}
+
+/* ── SECTION ESPORT ── */
+.esportSection {
+    position: relative;
+    padding: 10rem 0;
+    /* Espacement généreux sur PC */
+    min-height: 500px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+}
+
+.esportBg {
+    position: absolute;
+    inset: 0;
+    background: url("/activities/esport.jpg") center/cover no-repeat;
+    /* Ton filtre néon signature */
+    filter: brightness(0.4) sepia(1) saturate(3) hue-rotate(190deg);
+    z-index: 1;
+}
+
+.esportOverlay {
+    position: absolute;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.2);
+    z-index: 2;
+}
+
+.esportContent {
+    position: relative;
+    z-index: 10;
+    text-align: center;
+}
+
+.esportTitle {
+    /* Taille fluide : s'adapte entre 4rem et 10rem selon l'écran */
+    font-size: clamp(4rem, 15vw, 10rem);
+    font-weight: 800;
+    line-height: 0.9;
+    margin: 0;
+}
+
+.esportDesc {
+    font-size: 1.25rem;
+    color: var(--c-white);
+    max-width: 700px;
+    margin: 1.5rem auto 3rem;
+    opacity: 0.9;
+    /* Respect des retours à la ligne si tu en mets */
+    white-space: pre-line;
+}
+
+/* ── RESPONSIVE MOBILE ── */
+@media (max-width: 768px) {
+    .esportSection {
+        padding: 5rem 1rem;
+        /* On réduit l'espace perdu sur mobile */
+        min-height: 400px;
+    }
+
+    .esportTitle {
+        /* On s'assure que le néon ne déborde pas du téléphone */
+        font-size: clamp(3.5rem, 18vw, 6rem);
+    }
+
+    .esportDesc {
+        font-size: 1.1rem;
+        margin-bottom: 2rem;
+    }
+}
