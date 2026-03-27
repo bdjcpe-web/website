@@ -1,0 +1,335 @@
+/**
+ * @file src/components/Header/Header.module.css
+ * @author Loann Cordel - President du BDJ
+ * @date 27/03/2026
+ * @description module css du header
+ */
+
+/* STRUCTURE DE BASE */
+.headerContainer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 95%;
+    margin: 0 auto;
+}
+
+.headerLeft,
+.headerRight {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+
+.navLinks {
+    display: flex;
+    align-items: center;
+    gap: 30px;
+}
+
+.headerActionsDesktop {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+
+/* LOGO */
+.logoWrapper {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    overflow: hidden;
+    flex-shrink: 0;
+}
+
+.logoImg {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+/* UTILITAIRES DE VISIBILITÉ */
+.mobileOnly {
+    display: none;
+}
+
+@media (max-width: 1024px) {
+    .desktopOnly {
+        display: none !important;
+    }
+
+    .mobileOnly {
+        display: flex;
+    }
+}
+
+/* BOUTON COURONNE (Adaptatif) */
+/* BOUTON COURONNE VIP (Dégradé Or Pur Indépendant) */
+.crownCta {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+
+    /* Contraste maximal : texte très sombre pour ressortir sur l'or clair */
+    color: #111111;
+    font-weight: 800;
+    text-decoration: none;
+
+    /* Forme pilule */
+    padding: 0 24px;
+    height: 44px;
+    border-radius: 50px;
+    cursor: pointer;
+
+    /* 🏆 LE DÉGRADÉ GOLD (Adieu la palette BDJ) */
+    /* On crée un dégradé très large (200%) avec des reflets sombres et très clairs */
+    background: linear-gradient(100deg,
+            #B38728 0%,
+            #FBF5B7 25%,
+            #D4AF37 50%,
+            #FBF5B7 75%,
+            #AA771C 100%);
+    background-size: 200% auto;
+    /* Permet d'avoir de la marge pour animer */
+
+    position: relative;
+    transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
+    /* Transition ultra douce */
+
+    /* Ombre dorée diffuse */
+    box-shadow: 0 4px 15px rgba(212, 175, 55, 0.4);
+}
+
+/* Les éléments internes doivent rester bien nets */
+.crownCta i,
+.crownCta span {
+    position: relative;
+    z-index: 2;
+}
+
+/* 🌟 L'ANIMATION AU SURVOL */
+.crownCta:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(212, 175, 55, 0.6);
+    color: #000;
+
+    /* La magie est ici : on décale le dégradé, ce qui crée un effet de reflet métallique liquide */
+    background-position: right center;
+}
+
+/* 📱 RESPONSIVE (On le transforme en rond parfait sur mobile) */
+@media (max-width: 1024px) {
+    .crownCta {
+        padding: 0;
+        width: 44px;
+        /* Fixe la largeur pour faire un cercle avec la hauteur de 44px */
+        justify-content: center;
+    }
+
+    .crownCta i {
+        font-size: 1.5rem;
+        margin: 0;
+    }
+}
+
+/* PROFIL & DROPDOWN */
+.profileWrapper {
+    position: relative;
+    padding: 10px 0;
+}
+
+.profileIcon {
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    font-size: 1.4rem;
+    transition: 0.3s;
+}
+
+.profileIcon.auth {
+    background: var(--c-bordeaux);
+}
+
+.profileDropdown {
+    position: absolute;
+    top: 100%;
+    right: 0;
+    background: #0a0a0a;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 24px;
+    padding: 12px;
+    min-width: 260px;
+    z-index: 1000;
+    box-shadow: 0 25px 60px rgba(0, 0, 0, 0.8);
+    animation: fadeIn 0.2s ease-out;
+}
+
+.dropdownHeader {
+    padding: 16px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    margin-bottom: 8px;
+}
+
+.userName {
+    color: #fff;
+    font-weight: 800;
+    margin: 0;
+}
+
+.userEmail {
+    color: rgba(255, 255, 255, 0.4);
+    font-size: 0.8rem;
+    margin: 0;
+}
+
+.dropdownMenu {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.navDropdownItem {
+    padding: 12px 16px;
+    border-radius: 12px;
+    color: #f3f4f6;
+    font-weight: 500;
+    transition: all 0.2s;
+    display: block;
+    text-decoration: none;
+    border: none;
+    background: transparent;
+    text-align: left;
+    cursor: pointer;
+}
+
+.navDropdownItem:hover {
+    background: rgba(255, 255, 255, 0.05);
+    transform: translateX(4px);
+}
+
+.goldText {
+    color: var(--c-gold);
+}
+
+.logoutBtn {
+    color: #ef4444;
+    width: 100%;
+}
+
+.divider {
+    height: 1px;
+    background: rgba(255, 255, 255, 0.08);
+    margin: 8px 0;
+}
+
+/* HAMBURGER BTN */
+.hamburgerBtn {
+    background: transparent;
+    border: none;
+    color: white;
+    font-size: 2rem;
+    cursor: pointer;
+    padding: 0;
+}
+
+/* ── MOBILE DRAWER ── */
+.mobileDrawer {
+    position: fixed;
+    inset: 0;
+    z-index: 9999;
+    pointer-events: none;
+}
+
+.mobileDrawer.open {
+    pointer-events: auto;
+}
+
+.drawerOverlay {
+    position: absolute;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.8);
+    opacity: 0;
+    transition: opacity 0.3s;
+}
+
+.mobileDrawer.open .drawerOverlay {
+    opacity: 1;
+}
+
+.drawerContent {
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    width: 85%;
+    max-width: 350px;
+    background: #111;
+    border-left: 1px solid rgba(255, 255, 255, 0.1);
+    transform: translateX(100%);
+    transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    display: flex;
+    flex-direction: column;
+    padding: 2rem;
+}
+
+.mobileDrawer.open .drawerContent {
+    transform: translateX(0);
+}
+
+.drawerHeader {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 3rem;
+}
+
+.drawerLogo {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+}
+
+.closeBtn {
+    background: transparent;
+    border: none;
+    color: white;
+    font-size: 2rem;
+    cursor: pointer;
+}
+
+.drawerNav {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+.drawerLink {
+    color: white;
+    font-size: 1.5rem;
+    font-weight: 700;
+    text-decoration: none;
+}
+
+.neonText {
+    color: var(--c-esport-neon, #e63946);
+    text-shadow: 0 0 10px var(--c-esport-neon, #e63946);
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}

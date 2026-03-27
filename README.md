@@ -1,136 +1,174 @@
-# 🎮 BDJ - Architecture & Guide Technique
+# 🎮 Bureau des Jeux (BDJ) - Architecture & Guide Technique
 
-Ce document détaille le fonctionnement interne de la plateforme du Bureau des Jeux (CPE Lyon). Il s'adresse aux développeurs souhaitant comprendre l'interaction entre les différentes couches de l'application.
+Ce document détaille le fonctionnement interne de la plateforme du Bureau des Jeux (CPE Lyon). Il s'adresse aux développeurs, aux contributeurs actuels, ainsi qu'aux futurs responsables techniques de l'association souhaitant comprendre, maintenir et faire évoluer l'application.
 
 ---
 
-## 🏛️ Architecture Globale (High-Level)
+## 📋 Sommaire
 
-L'application utilise **Next.js 15** avec le **App Router**. Contrairement aux architectures traditionnelles, les frontières entre le serveur et le client sont gérées au niveau des composants.
+- [🏛️ Architecture Globale](#️-architecture-globale)
+- [🏗️ Philosophie de Développement](#️-philosophie-de-développement)
+- [🗄️ Modèle de Données & ORM (Prisma)](#️-modèle-de-données--orm-prisma)
+- [🔐 Sécurité & Authentification (NextAuth)](#-sécurité--authentification-nextauth)
+- [📂 Structure du Projet](#-structure-du-projet)
+- [🚀 Déploiement & Intégration Continue](#-déploiement--intégration-continue)
+- [🤝 Guide de Passation (Onboarding)](#-guide-de-passation-onboarding)
+
+---
+
+## 🏛️ Architecture Globale
+
+L'application est construite avec **Next.js 15 (App Router)**, adoptant une approche moderne où les frontières entre le client et le serveur sont définies au niveau des composants. L'objectif principal est la séparation des préoccupations (**Clean Architecture**) et la maintenabilité à long terme.
 
 ```mermaid
 graph TD
-    User((Utilisateur)) <-->|Navigateur| Client[React Client Components]
-    Client <-->|Fetch / Actions| API[Next.js API Routes / Server Actions]
-    API <-->|Prisma Client| ORM[Prisma ORM]
-    ORM <-->|SQL Queries| DB[(SQLite Database)]
-    API <-->|Session Check| Auth[NextAuth.js]
+    User((Utilisateur)) <-->|Navigateur| Client[Client Components - Interactivité UI]
+    User <-->|Navigation/Rendu| Server[Server Components - Rendu HTML]
+    Client <-->|Fetch / Server Actions| API[Next.js API Routes]
+    Server <-->|Appels directs| ORM[Prisma ORM]
+    API <-->|Appels via routeurs| ORM
+    ORM <-->|Requêtes SQL| DB[(Base de données relationnelle)]
+    Server <-->|Vérification Session| Auth[NextAuth.js]
+    API <-->|Vérification Session| Auth
 ```
 
 ---
 
-## 🖥️ Le Côté Serveur (The Backbone)
+## 🏗️ Philosophie de Développement (Clean Code)
 
-Le serveur gère la persistance des données, l'authentification et le rendu initial.
+Pour garantir la pérennité du projet, nous appliquons des principes de développement stricts :
 
-### 1. Server Components (`src/app/`)
-Par défaut, tous les fichiers dans `src/app/` sont des **Server Components**.
-- **Avantage** : Ils peuvent importer `prisma` directement sans exposer les secrets au client.
-- **Fonctionnement** : Le composant s'exécute côté serveur, récupère les données (`await prisma.user.findMany()`), et génère le HTML final envoyé au navigateur.
-- **Exemple** : La page `profil/page.tsx` récupère la session et les réservations en une seule passe serveur avant même que l'utilisateur ne voie la page.
+### 1. Approche Orientée Composant
+- **Encapsulation** : Chaque composant est responsable de son propre rendu et de sa propre logique d'affichage. Les données métier complexes sont gérées plus haut dans l'arborescence.
+- **CSS Modules** : Les styles sont isolés (ex: `Hero.module.css`) pour éviter les conflits globaux. La composition CSS est privilégiée pour les variations.
+- **"Dumb Components"** : Les composants UI purs reçoivent leurs données via des props et ignorent l'origine de ces données, ce qui les rend hautement réutilisables.
 
-### 2. API Routes (`src/app/api/`)
-Utilisées pour les opérations de modification (POST/DELETE) ou les services tiers.
-- **`getServerSession(authOptions)`** : La fonction clé pour vérifier l'identité de l'appelant côté serveur.
-- **Techno** : Routes handlers standard de Next.js (`export async function POST(req) { ... }`).
-- **Cas d'usage** : `/api/member/verify` pour invalider un QR code après scan.
+### 2. Le Côté Serveur (The Backbone)
+Le serveur gère la persistance, l'authentification et le rendu initial pour la performance et le SEO.
+- **Server Components** (`src/app/`) : Par défaut, les composants sont exécutés côté serveur. Ils peuvent interagir directement avec Prisma sans exposer de logique sensible au client.
+- **API Routes** (`src/app/api/`) : Utilisées pour les opérations asynchrones (POST/DELETE) ou pour interagir avec des services tiers (ex: Webhooks HelloAsso).
 
----
-
-## 🖌️ Le Côté Client (Interactivité)
-
-Défini par la directive `'use client'`, le côté client gère l'état de l'interface et les interactions riches.
-
-### 1. État et Hooks
-- **`useState` & `useEffect`** : Utilisés pour la gestion locale (ex: ouvrir un modal, afficher un minuteur).
-- **`useSession()`** : Hook de NextAuth pour accéder aux infos de l'utilisateur connecté sans recharger la page.
-
-### 2. Communication Client -> Serveur
-L'interaction se fait via des appels `fetch()` standard vers les API routes :
-```javascript
-// Exemple type dans un composant client
-const handleAction = async () => {
-  const res = await fetch('/api/local/book', { 
-    method: 'POST', 
-    body: JSON.stringify(data) 
-  });
-  if (res.ok) router.refresh(); // Force Next.js à re-fetch les Server Components
-};
-```
+### 3. Le Côté Client (Interactivité)
+Défini explicitement par la directive `'use client'` en haut de fichier.
+- **Usage Restreint** : Limité aux composants nécessitant une interactivité immédiate (modales, compteurs, gestion d'état local).
+- **Communication** : L'interaction avec la base de données se fait via des appels `fetch()` vers nos API Routes ou via les **Server Actions**.
 
 ---
 
-## 🗄️ Base de Données & Modèle de Données
+## 🗄️ Modèle de Données & ORM (Prisma)
 
-### 1. Prisma ORM : Le Pont
-Prisma transforme votre schéma de base de données en un client TypeScript auto-généré.
-- **Modèle de données** (`prisma/schema.prisma`) : La source unique de vérité.
-- **Prisma Client** (`src/lib/prisma.ts`) : Instance unique partagée pour éviter l'épuisement des connexions SQLite.
+Prisma est notre pont (**Object-Relational Mapping**) vers la base de données. Il garantit un typage fort (**TypeScript**) de bout en bout.
 
-### 2. Modèles Principaux & Relations
-- **`User`** : Le cœur du système. Relié à `Booking` (1:N) et `Player` (1:1 optionnel).
-- **`Booking`** : Gère les créneaux du local. Lié à un `User` via `userId`.
-- **`EsportTeam` & `Player`** : Structure en cascade. Une équipe possède plusieurs joueurs, qui peuvent être liés (ou non) à un compte `User` (pour les stats).
+- **Source de Vérité** : Le fichier `prisma/schema.prisma` définit la structure complète de l'application.
+- **Client Unique** : L'instance Prisma est centralisée dans `src/lib/prisma.ts` pour gérer efficacement le pool de connexions.
 
-### 3. SQLite : Persistance Légère
-Les données sont stockées dans `prisma/dev.db`. C'est un moteur relationnel complet, supportant les transactions (essentiel pour éviter les doubles réservations sur le même créneau).
+### Entités Principales
+- **User** : Le cœur du système (authentification NextAuth).
+- **Booking** : Gestion des créneaux du local, lié à un User.
+- **Event / Reservation** (En cours) : Modèles prévus pour la synchronisation avec HelloAsso.
 
 ---
 
-## 🔐 Sécurité & Authentification
+## 🔐 Sécurité & Authentification (NextAuth)
 
-### 1. Authentification Hybride (NextAuth)
-Le système d'authentification est le pivot de la sécurité :
-- **Provider** : `CredentialsProvider` gère la connexion via e-mail (CPE) et mot de passe (haché avec `bcryptjs`).
-- **Callback `authorize`** : Lors de la connexion, le serveur vérifie les identifiants, mais aussi si l'e-mail a été vérifié (`emailVerified`).
-- **Callbacks `jwt` & `session`** : Ces fonctions (dans `src/lib/auth.ts`) permettent de faire transiter des données personnalisées (comme `isMember` ou `id`) depuis la DB vers le token chiffré, puis vers la session accessible côté client.
-- **Stratégie** : JWT (JSON Web Token) chiffré stocké dans un cookie `httpOnly` (invisible pour le JS client, prévenant les attaques XSS).
-- **Validation** : Les routes sensibles vérifient `isMember` ou les emails d'admins stockés dans la variable d'environnement `ADMIN_EMAILS`.
+Le système repose sur **NextAuth.js** pour une authentification sécurisée et sans friction :
+
+- **Stratégie JWT** : Les sessions sont gérées via des tokens chiffrés stockés dans des cookies `httpOnly`, protégeant l'application contre les failles XSS.
+- **Callbacks** (`src/lib/auth.ts`) : Nous enrichissons le token avec des données métier (ex: le rôle `isAdmin` ou le statut `isMember`).
+- **Protection des Routes** : Les composants serveurs et les API routes critiques vérifient systématiquement la validité de la session via `getServerSession()`.
 
 ---
 
-## 🛠️ Exemples d'Interactions Techniques
-
-### Scénario : Génération du QR Code Membre
-1.  **Serveur** (`profil/page.tsx`) : Détecte si `user.isMember` est vrai.
-2.  **Client** (`MemberCard.tsx`) : Appelle `/api/member/qr`.
-3.  **API** (`/api/member/qr/route.ts`) :
-    - Vérifie la session.
-    - Génère un `qrToken` aléatoire via `crypto.randomBytes(32)`.
-    - Enregistre le token dans la DB via `prisma.user.update`.
-4.  **Client** : Reçoit le token et utilise `QRCodeSVG` pour le dessiner localement.
-
-### Scénario : Admin Dashboard (Migration)
-Le dashboard admin est passé de `le-local/` au `profil/`.
-- **Logique** : Le serveur filtre les `bookings` seulement si l'email de session est dans la liste des admins.
-- **Modèle** : Utilisation de `include: { user: true }` dans la requête Prisma pour récupérer les noms des étudiants en une seule jointure SQL performante.
-
----
-
-## 📂 Structure du Projet (Tree View)
+## 📂 Structure du Projet
 
 ```bash
 BDJ
 ├── prisma/                 # Configuration BDD & Migrations
-│   ├── dev.db              # SQLite Database
-│   └── schema.prisma       # Modèles de données (Source of truth)
-├── public/                 # Assets statiques (Photos, Icons)
+│   ├── schema.prisma       # Modèles de données (Source of truth)
+│   └── dev.db              # [LOCAL ONLY] SQLite Database
+├── public/                 # Assets statiques (Images, Icônes)
 ├── src/
 │   ├── app/                # Next.js App Router (Pages & API)
-│   │   ├── api/            # Route Handlers (Back-end)
-│   │   ├── le-local/       # Module de réservation
-│   │   ├── profil/         # Espace utilisateur & Admin Dashboard
+│   │   ├── (Home)/         # Fichiers de la Landing Page (Isolés)
+│   │   ├── api/            # Route Handlers (Endpoints Back-end)
+│   │   ├── poles/          # Pages détaillées des activités
 │   │   ├── layout.tsx      # Structure globale (Header/Footer)
-│   │   └── page.tsx        # Landing Page
-│   ├── components/         # Composants UI réutilisables (React)
-│   │   ├── MemberCard.tsx  # Carte de fidélité dynamique
-│   │   ├── Header.tsx      # Barre de navigation
+│   │   └── global.css      # Styles transversaux & Variables CSS
+│   ├── components/         # Composants UI isolés et réutilisables
+│   │   ├── Hero/           # Composant avec son .tsx et .module.css
+│   │   ├── BentoGrid/      # Grille asymétrique
 │   │   └── ...
-│   ├── lib/                # Configs & instances partagées
-│   │   ├── auth.ts         # Logique NextAuth
+│   ├── lib/                # Configs, utilitaires et instances partagées
+│   │   ├── auth.ts         # Logique métier NextAuth
 │   │   └── prisma.ts       # Singleton Prisma Client
-│   └── data/               # Données statiques ou mockées
-├── package.json            # Dépendances & scripts
-├── tsconfig.json           # Config TypeScript
-└── next.config.ts          # Config Next.js
+│   └── data/               # Source of truth des données statiques
+├── package.json            # Dépendances & scripts NPM
+├── tsconfig.json           # Configuration TypeScript stricte
+└── next.config.ts          # Configuration Next.js
 ```
+
+---
+
+## 🚀 Déploiement & Intégration Continue
+
+### 1. Le Dépôt Central (GitHub)
+Le code source est hébergé sur le repository GitHub de l'association.
+- **Branche `main`** : C'est la branche de production. Tout code fusionné ici doit être stable et testé.
+- **Workflow** : Le développement de nouvelles fonctionnalités (ex: Intégration HelloAsso) doit se faire sur des branches dédiées (`feature/helloasso`), validées par des **Pull Requests (PR)** avant fusion.
+
+### 2. L'Hébergement (Vercel)
+L'application est déployée sur **Vercel**, la plateforme native pour Next.js.
+- **Déploiement Automatique (CI/CD)** : Chaque push sur la branche `main` déclenche un nouveau déploiement en production.
+- **Preview Deployments** : Chaque Pull Request génère une URL temporaire pour tester les modifications.
+- **Variables d'Environnement** : Les clés API sont stockées de manière sécurisée dans le tableau de bord Vercel. **Elles ne doivent jamais être commitées sur GitHub.**
+
+---
+
+## 🤝 Guide de Passation (Onboarding)
+
+Ce guide est destiné au repreneur du projet (nouveau Tech Lead ou développeur du BDJ).
+
+### Prérequis Techniques
+- Avoir installé **Node.js** (LTS recommandé) et **Git**.
+- Disposer d'un éditeur de code (**VS Code** recommandé) avec les extensions : **ESLint**, **Prettier**, et **Prisma**.
+
+### Étape 1 : Récupérer le projet
+Clonez le dépôt officiel sur votre machine :
+```bash
+git clone https://github.com/votre-organisation/bdj-website.git
+cd bdj-website
+```
+
+### Étape 2 : Installer les dépendances
+```bash
+npm install
+```
+*(Note : En cas de conflits, utilisez `npm install --legacy-peer-deps`)*.
+
+### Étape 3 : Configuration locale
+1. Demandez au précédent Tech Lead les valeurs du fichier de configuration local.
+2. Créez un fichier `.env` à la racine (ignoré par Git).
+3. Collez-y les variables nécessaires (`DATABASE_URL`, `NEXTAUTH_SECRET`, etc.).
+
+### Étape 4 : Initialiser la Base de Données
+```bash
+npx prisma generate
+```
+Si vous utilisez une base locale (SQLite) non initialisée :
+```bash
+npx prisma db push
+```
+
+### Étape 5 : Lancer le moteur
+```bash
+npm run dev
+```
+L'application est maintenant accessible sur [http://localhost:3000](http://localhost:3000).
+
+---
+
+## ⚠️ Avertissements pour le successeur
+
+- **Dette Technique** : Priorisez toujours la correction des bugs d'interface mobile. 80% des étudiants visitent le site depuis leur téléphone.
+- **OneDrive/CloudSync** : Ne placez jamais le projet dans un dossier synchronisé (comme OneDrive). La synchronisation de `node_modules` ralentira votre machine.
+- **Base de Données en Production** : Attention aux migrations Prisma. Testez toujours localement avant de déployer.
