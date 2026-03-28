@@ -1,10 +1,94 @@
+/**
+ * @file src/app/api/bookings/route.ts
+ * @author Loann Cordel - Président du BDJ
+ * @date 28/03/2026
+ * @architecture Server Component
+ * @description API Route pour la gestion des réservations.
+ * @requires
+ * - 'next/server' : Pour la gestion des réponses HTTP.
+ * - '@prisma/client' : Client Prisma pour l'accès à la base de données.
+ * - 'next-auth' : Pour la gestion de la session utilisateur.
+ * - 'nodemailer' : Pour l'envoi d'emails.
+ */
+
 import { NextResponse } from 'next/server';
 import { PrismaClient } from '@prisma/client';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth';
-import nodemailer from 'nodemailer';
+import { sendEmail, buildBdjEmail } from '@/lib/mail';
 
 const prisma = new PrismaClient();
+
+// Fonction utilitaire déplacée en haut
+function getMonday(d: Date) {
+  const date = new Date(d);
+  const day = date.getDay() || 7;
+  if (day !== 1) {
+    date.setHours(-24 * (day - 1));
+  }
+  date.setHours(0, 0, 0, 0);
+  return date;
+}
+
+// ── 1. UTILISATION DU NOUVEAU SYSTÈME DE MAIL (MULTI-CAS) ──
+async function sendCancellationEmail(
+  toEmail: string,
+  firstName: string,
+  dateFormatted: string,
+  startTime: string,
+  endTime: string,
+  type: 'override' | 'admin',
+  customMessage?: string
+) {
+  let emailContent = '';
+
+  if (type === 'override') {
+    // Cas 1 : Un membre a pris la place d'un non-membre
+    emailContent = `
+      <p>Bonjour <strong>${firstName}</strong>,</p>
+      <p>
+        Ta réservation du Local BDJ pour le créneau du <strong>${dateFormatted}</strong> 
+        de <strong>${startTime}</strong> à <strong>${endTime}</strong> a été reprise par un membre cotisant du BDJ.
+      </p>
+      <div style="background: #fff1f2; border-left: 4px solid #6D0C24; padding: 15px; margin: 20px 0; border-radius: 0 8px 8px 0;">
+        <p style="margin: 0; color: #941131;">
+          💡 En tant que <strong>membre cotisant</strong>, tu bénéficies d'une priorité de réservation et tu ne peux pas être évincé de cette façon. La cotisation annuelle n'est que de <strong>10€</strong> !
+        </p>
+      </div>
+      <div style="text-align: center; margin: 30px 0;">
+        <a href="https://www.bdjcpe.fr/cotisation" 
+           style="display: inline-block; padding: 12px 28px; background: #6D0C24; color: #fff; font-weight: 700; border-radius: 10px; text-decoration: none;">
+          Découvrir les avantages de la cotisation →
+        </a>
+      </div>
+    `;
+  } else {
+    // Cas 2 : Annulation par le Bureau des Jeux (Admin)
+    emailContent = `
+      <p>Bonjour <strong>${firstName}</strong>,</p>
+      <p>
+        Nous sommes désolés de t'informer que ta réservation du Local BDJ pour le créneau du <strong>${dateFormatted}</strong> 
+        de <strong>${startTime}</strong> à <strong>${endTime}</strong> a dû être annulée par le Bureau des Jeux.
+      </p>
+      <div style="background: rgba(255, 255, 255, 0.05); border-left: 4px solid #e1b82f; padding: 15px; margin: 20px 0; border-radius: 0 8px 8px 0;">
+        <p style="margin: 0; color: #e5e7eb;">
+          <strong>Motif :</strong> ${customMessage || "Fermeture exceptionnelle du local, événement du bureau ou maintenance."}
+        </p>
+      </div>
+      <p>N'hésite pas à réserver un autre créneau très vite !</p>
+    `;
+  }
+
+  emailContent += `<p style="margin-top: 24px;">Ludiquement,<br><strong>L'équipe du Bureau des Jeux</strong></p>`;
+
+  const finalHtml = buildBdjEmail("Réservation annulée 🚨", emailContent);
+
+  const subject = type === 'override'
+    ? `Ta réservation du Local a été reprise par un membre (${dateFormatted})`
+    : `Annulation de ta réservation du Local (${dateFormatted})`;
+
+  await sendEmail(toEmail, subject, finalHtml);
+}
 
 export async function GET(req: Request) {
   const { searchParams } = new URL(req.url);
@@ -34,67 +118,22 @@ export async function GET(req: Request) {
       }
     });
 
-    // For members: a slot booked only by a non-member is still "overridable"
+    // ── 2. MISE À JOUR DE LA LOGIQUE D'AFFICHAGE FRONTEND ──
+    const now = new Date();
+    const oneWeekFromNow = new Date(now.getTime() + 7 * 24 * 60 * 60 * 1000);
+
     const result = bookings.map(b => ({
       startTime: b.startTime,
       endTime: b.endTime,
       status: b.status,
-      // overridable = slot is taken by a non-member AND the caller is a member
-      overridable: isMember && !b.user.isMember,
+      // overridable = Le demandeur est membre + Le propriétaire n'est pas membre + C'est à moins de 7 jours !
+      overridable: isMember && !b.user.isMember && (dateQuery >= oneWeekFromNow),
     }));
 
     return NextResponse.json(result);
   } catch (error) {
     return NextResponse.json({ error: "Erreur serveur" }, { status: 500 });
   }
-}
-
-// Helper pour trouver le Lundi
-function getMonday(d: Date) {
-  const date = new Date(d);
-  const day = date.getDay() || 7;
-  if (day !== 1) {
-    date.setHours(-24 * (day - 1));
-  }
-  date.setHours(0, 0, 0, 0);
-  return date;
-}
-
-async function sendEvictionEmail(toEmail: string, firstName: string, dateFormatted: string, startTime: string, endTime: string) {
-  const transporter = nodemailer.createTransport({
-    service: 'gmail',
-    auth: {
-      user: process.env.SMTP_USER,
-      pass: process.env.SMTP_PASSWORD,
-    }
-  });
-
-  await transporter.sendMail({
-    from: `"Bureau des Jeux CPE" <${process.env.SMTP_USER}>`,
-    to: toEmail,
-    replyTo: process.env.SMTP_USER,
-    subject: `Ta réservation du Local a été reprise par un membre (${dateFormatted})`,
-    html: `
-      <div style="font-family: sans-serif; color: #111827; max-width: 600px; margin: 0 auto; padding: 24px; border: 1px solid #e5e7eb; border-radius: 12px;">
-        <h2 style="color: #6D0C24; margin-top: 0;">Réservation annulée</h2>
-        <p>Bonjour <strong>${firstName}</strong>,</p>
-        <p>
-          Ta réservation du Local BDJ pour le créneau du <strong>${dateFormatted}</strong>
-          de <strong>${startTime}</strong> à <strong>${endTime}</strong> a été reprise par un membre cotisant du BDJ.
-        </p>
-        <div style="background: #fff1f2; border-left: 4px solid #6D0C24; padding: 15px; margin: 20px 0; border-radius: 0 8px 8px 0;">
-          <p style="margin: 0; color: #941131;">
-            💡 En tant que <strong>membre cotisant</strong>, tu bénéficies d'une priorité de réservation et tu ne peux pas être évincé de cette façon. La cotisation annuelle n'est que de <strong>10€</strong> !
-          </p>
-        </div>
-        <a href="https://www.bdj-cpe.fr/cotisation"
-           style="display: inline-block; margin-top: 8px; padding: 12px 28px; background: #6D0C24; color: #fff; font-weight: 700; border-radius: 10px; text-decoration: none;">
-          Découvrir les avantages de la cotisation →
-        </a>
-        <p style="margin-top: 24px;">Ludiquement,<br><strong>L'équipe du Bureau des Jeux</strong></p>
-      </div>
-    `
-  });
 }
 
 export async function POST(req: Request) {
@@ -117,7 +156,6 @@ export async function POST(req: Request) {
     // @ts-ignore
     const callerIsMember = session.user.isMember === true;
 
-    // Check if slot already booked
     const existingBooking = await prisma.booking.findFirst({
       where: {
         date: { gte: reqDate, lt: new Date(reqDate.getTime() + 24 * 60 * 60 * 1000) },
@@ -127,29 +165,32 @@ export async function POST(req: Request) {
     });
 
     if (existingBooking) {
-      // Case 1: booked by the same user
       if (existingBooking.userId === userId) {
         return NextResponse.json({ error: "Tu as déjà réservé ce créneau." }, { status: 400 });
       }
 
-      // Case 2: booked by a member → no override possible
       if (existingBooking.user.isMember) {
         return NextResponse.json({ error: "Ce créneau est réservé par un membre — il ne peut pas être repris." }, { status: 400 });
       }
 
-      // Case 3: booked by a non-member but caller is not a member → slot is taken
       if (!callerIsMember) {
         return NextResponse.json({ error: "Ce créneau vient juste d'être pris par quelqu'un d'autre." }, { status: 400 });
       }
 
-      // Case 4: caller IS a member, existing booking is a non-member → OVERRIDE
+      // ── 3. VÉRIFICATION BACKEND DES 7 JOURS POUR L'ÉVICTION ──
+      const now = new Date();
+      const oneWeekFromNow = new Date(now.getTime() + 7 * 24 * 60 * 60 * 1000);
+
+      if (reqDate > oneWeekFromNow) {
+        return NextResponse.json({ error: "Tu ne peux évincer un non-membre que si la réservation a lieu dans les 7 prochains jours." }, { status: 400 });
+      }
+
+      // L'éviction est valide
       const dateFormatted = reqDate.toLocaleDateString('fr-FR', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
 
-      // Delete the non-member booking
       await prisma.booking.delete({ where: { id: existingBooking.id } });
 
-      // Send eviction email (fire and forget — don't block the response)
-      sendEvictionEmail(existingBooking.user.email, existingBooking.user.firstName, dateFormatted, startTime, endTime)
+      sendCancellationEmail(existingBooking.user.email, existingBooking.user.firstName, dateFormatted, startTime, endTime, 'override')
         .catch(err => console.error('Eviction email failed:', err));
     }
 
@@ -160,12 +201,12 @@ export async function POST(req: Request) {
       take: 5
     });
 
-    const now = new Date();
+    const nowCheck = new Date();
     const hasActive = activeBookings.some(b => {
       const endDateTime = new Date(b.date);
       const [hours, mins] = b.endTime.split(':');
       endDateTime.setHours(parseInt(hours), parseInt(mins), 0);
-      return endDateTime > now;
+      return endDateTime > nowCheck;
     });
 
     if (hasActive) {

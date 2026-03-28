@@ -248,3 +248,20 @@
 .passwordToggle:hover {
     color: var(--auth-main);
 }
+
+/* ── LIEN MOT DE PASSE OUBLIÉ ── */
+.forgotPassword {
+    text-align: right;
+    margin-top: 10px;
+}
+
+.forgotPasswordLink {
+    font-size: 0.8rem;
+    color: var(--c-grey-medium);
+    text-decoration: none;
+    transition: color 0.2s;
+}
+
+.forgotPasswordLink:hover {
+    color: var(--auth-main);
+}

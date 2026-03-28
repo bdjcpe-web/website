@@ -1,72 +1,83 @@
+/**
+ * @file src/app/api/admin/cancel-reservation/actions.ts
+ * @author Loann Cordel
+ * @date 27/03/2026
+ * @description Action serveur pour annuler une réservation et notifier l'utilisateur
+ */
+
 'use server';
 
-import { PrismaClient } from '@prisma/client';
+import prisma from '@/lib/prisma';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth';
-import nodemailer from 'nodemailer';
+import { sendEmail, buildBdjEmail } from '@/lib/mail';
 import { revalidatePath } from 'next/cache';
-
-const prisma = new PrismaClient();
 
 export async function cancelBookingAndNotify(bookingId: string) {
   const session = await getServerSession(authOptions);
-  if (!session?.user?.email) {
+
+  // @ts-ignore (Assure-toi que session.user.id existe bien dans ton authOptions)
+  const currentUserId = session?.user?.id as string;
+  const currentUserEmail = session?.user?.email?.toLowerCase() || '';
+
+  if (!currentUserId || !currentUserEmail) {
     return { error: 'Non autorisé.' };
   }
 
+  // 1. Définir si l'utilisateur actuel est un Admin
   const adminEmails = (process.env.ADMIN_EMAILS || "").split(',').map(e => e.trim().toLowerCase());
-  if (!adminEmails.includes(session.user.email.toLowerCase())) {
-    return { error: 'Accès refusé. Réservé aux administrateurs.' };
-  }
+  const isAdmin = adminEmails.includes(currentUserEmail);
 
   try {
+    // 2. Récupérer la réservation AVANT de la supprimer (pour savoir à qui elle appartient)
     const booking = await prisma.booking.findUnique({
       where: { id: bookingId },
       include: { user: true }
     });
 
     if (!booking) {
-      return { error: 'Réservation introuvable.' };
+      return { error: 'Réservation introuvable ou déjà annulée.' };
     }
 
-    // 1. Delete booking
+    // 3. VÉRIFICATION DES DROITS (Sécurité)
+    // Si ce n'est ni un admin, ni le propriétaire de la réservation -> On bloque
+    if (!isAdmin && booking.userId !== currentUserId) {
+      return { error: 'Tu ne peux annuler que tes propres réservations.' };
+    }
+
+    // 4. Suppression de la réservation
     await prisma.booking.delete({
       where: { id: bookingId }
     });
 
-    // 2. Send email notification
-    const transporter = nodemailer.createTransport({
-      service: 'gmail',
-      auth: {
-        user: process.env.SMTP_USER,
-        pass: process.env.SMTP_PASSWORD,
-      }
-    });
+    // 5. ENVOI DU MAIL (Seulement si c'est un Admin)
+    if (isAdmin) {
+      const dateFormatted = booking.date.toLocaleDateString('fr-FR', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
 
-    const dateFormatted = booking.date.toLocaleDateString('fr-FR', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
-    
-    const mailOptions = {
-      from: `"Bureau des Jeux CPE" <${process.env.SMTP_USER}>`,
-      to: booking.user.email,
-      replyTo: process.env.SMTP_USER,
-      subject: `Annulation de votre réservation du Local (le ${dateFormatted})`,
-      text: `Bonjour ${booking.user.firstName},\n\nNous t'informons que ta réservation du Local BDJ pour le créneau du ${dateFormatted} de ${booking.startTime} à ${booking.endTime} a été annulée par un administrateur.\n\nSi tu souhaites obtenir des explications ou si tu penses qu'il s'agit d'une erreur, n'hésite pas à répondre directement à cet email.\n\nL'équipe du Bureau des Jeux.`,
-      html: `
-        <div style="font-family: sans-serif; color: #111827; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #e5e7eb; border-radius: 12px;">
-          <h2 style="color: #6D0C24;">Annulation de réservation</h2>
-          <p>Bonjour <strong>${booking.user.firstName}</strong>,</p>
-          <p>Nous t'informons que ta réservation du Local BDJ pour le créneau du <strong>${dateFormatted}</strong> de <strong>${booking.startTime}</strong> à <strong>${booking.endTime}</strong> a été annulée par un administrateur.</p>
-          <div style="background: #fff1f2; border-left: 4px solid #6D0C24; padding: 15px; margin: 20px 0; border-radius: 0 8px 8px 0;">
-            <p style="margin: 0; color: #941131;">Si tu souhaites obtenir des explications concernant cette annulation, tu peux répondre directement à cet email pour contacter l'équipe.</p>
-          </div>
-          <p>Ludiquement,<br><strong>L'équipe du Bureau des Jeux</strong></p>
+      const emailContent = `
+        <p>Bonjour <strong>${booking.user.firstName}</strong>,</p>
+        <p>Nous t'informons que ta réservation du Local BDJ pour le créneau du <strong>${dateFormatted}</strong> de <strong>${booking.startTime}</strong> à <strong>${booking.endTime}</strong> a été annulée par un administrateur.</p>
+        
+        <div style="background: rgba(255, 255, 255, 0.05); border-left: 4px solid #6D0C24; padding: 15px; margin: 20px 0; border-radius: 0 8px 8px 0;">
+          <p style="margin: 0; color: #e5e7eb;">Si tu souhaites obtenir des explications concernant cette annulation, tu peux répondre directement à cet email pour contacter l'équipe.</p>
         </div>
-      `
-    };
+        
+        <p style="margin-top: 24px;">Ludiquement,<br><strong>L'équipe du Bureau des Jeux</strong></p>
+      `;
 
-    await transporter.sendMail(mailOptions);
+      const finalHtml = buildBdjEmail("Annulation de réservation 🚨", emailContent);
 
+      // Le .catch permet de ne pas bloquer l'UI si le mail plante
+      sendEmail(
+        booking.user.email,
+        `Annulation de ta réservation du Local (le ${dateFormatted})`,
+        finalHtml
+      ).catch(err => console.error('Erreur envoi mail annulation admin:', err));
+    }
+
+    // 6. Rafraîchissement automatique de la page
     revalidatePath('/le-local');
+
     return { success: true };
 
   } catch (error) {

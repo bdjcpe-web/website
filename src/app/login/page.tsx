@@ -12,6 +12,7 @@
  */
 
 'use client';
+import Link from 'next/link';
 import { useState } from 'react';
 import { signIn } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
@@ -95,6 +96,12 @@ export default function LoginPage() {
         </button>
 
       </form>
+
+      <div className={styles.forgotPassword}>
+        <Link href="/forgot-password" className={styles.forgotPasswordLink}>
+          Mot de passe oublié ?
+        </Link>
+      </div>
     </AuthLayout>
   );
 }

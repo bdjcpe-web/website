@@ -13,7 +13,7 @@ export default function CancelBookingButton({ bookingId }: { bookingId: string }
   const [isCancelling, setIsCancelling] = useState(false);
 
   const handleCancelClick = async () => {
-    if (!confirm("Êtes-vous sûr de vouloir annuler cette réservation ? Un email de notification sera immédiatement envoyé à l'étudiant.")) {
+    if (!confirm("Êtes-vous sûr de vouloir annuler cette réservation ?")) {
       return;
     }
 
@@ -23,7 +23,7 @@ export default function CancelBookingButton({ bookingId }: { bookingId: string }
     if (res.error) {
       alert(`Erreur : ${res.error}`);
     } else {
-      alert("La réservation a été annulée et l'étudiant a été notifié par email.");
+      alert("La réservation a été annulée.");
     }
 
     setIsCancelling(false);

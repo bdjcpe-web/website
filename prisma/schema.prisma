@@ -24,6 +24,8 @@ model User {
   registeredYear    Int?
   qrToken           String?   @unique
   qrTokenAt         DateTime?
+  resetToken        String?   @unique
+  resetTokenExpiry  DateTime?
 
   bookings          Booking[]
   esportPlayers     Player[]
