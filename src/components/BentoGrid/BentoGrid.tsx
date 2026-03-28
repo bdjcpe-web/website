@@ -37,7 +37,7 @@ export default function BentoGrid({ activities }: BentoGridProps) {
                 return (
                     <Link
                         key={act.slug}
-                        href={`/activites/${act.slug}`}
+                        href={act.slug === 'local' ? '/le-local' : `/activites/${act.slug}`}
                         className={`${styles.bentoCard} ${layoutClass}`}
                         style={{
                             // Couleur pure et une version avec opacité (CC = 80%) pour l'ombre
@@ -47,7 +47,7 @@ export default function BentoGrid({ activities }: BentoGridProps) {
                     >
                         {/* Image de fond */}
                         <img
-                            src={act.image || "/activities/local.jpg"}
+                            src={act.image}
                             alt={act.title}
                             className={styles.bgImage}
                         />
@@ -56,7 +56,7 @@ export default function BentoGrid({ activities }: BentoGridProps) {
                         <div className={styles.overlay} />
 
                         {/* Icône en haut à gauche */}
-                        <i className={`ph ${act.icon || 'ph-game-controller'} ${styles.iconTopLeft}`} />
+                        <i className={`ph ${act.icon} ${styles.iconTopLeft}`} />
 
                         {/* Contenu en bas */}
                         <div className={styles.content}>

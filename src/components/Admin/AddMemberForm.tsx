@@ -1,3 +1,10 @@
+/**
+ * @file @/components/Admin/AddMemberForm.tsx
+ * @author Loann Cordel
+ * @date 27/03/2026
+ * @description Composant pour ajouter un membre
+ */
+
 "use client";
 
 import { useState } from "react";

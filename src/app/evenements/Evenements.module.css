@@ -1,0 +1,277 @@
+/**
+ * @file Evenements.module.css
+ * @author Loann CORDEL
+ * @date 27/03/2026
+ * @description Styles pour la page des événements
+ */
+
+.pageContainer {
+    min-height: 100vh;
+    padding-top: 120px;
+    padding-bottom: 100px;
+    background-color: var(--bg-main, #fff);
+}
+
+/* ── HEADER (Identique à Rejoindre) ── */
+.header {
+    text-align: center;
+    margin-bottom: 80px;
+}
+
+.subtitle {
+    font-size: 1.25rem;
+    color: var(--c-grey-medium);
+    max-width: 600px;
+    margin: 20px auto 0;
+    font-weight: 500;
+}
+
+.divider {
+    width: 80px;
+    height: 4px;
+    background: var(--c-bordeaux);
+    margin: 40px auto 0;
+    border-radius: 2px;
+}
+
+/* ── LAYOUT PRINCIPAL (Mobile-First) ── */
+.mainLayout {
+    display: flex;
+    flex-direction: column;
+    gap: 32px;
+    margin-top: 2rem;
+}
+
+/* Ordre d'affichage sur mobile */
+.filtersSection {
+    order: 1;
+}
+
+.eventsSection {
+    order: 2;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.calendarSection {
+    order: 3;
+}
+
+/* Desktop Layout : Grille à aires nommées */
+@media (min-width: 1024px) {
+    .mainLayout {
+        display: grid;
+        grid-template-columns: 360px 1fr;
+        grid-template-areas:
+            "filters events"
+            "calendar events";
+        align-items: start;
+        /* Empêche l'étirement vertical inutile */
+    }
+
+    .filtersSection {
+        grid-area: filters;
+        position: sticky;
+        top: 100px;
+    }
+
+    .calendarSection {
+        grid-area: calendar;
+    }
+
+    .eventsSection {
+        grid-area: events;
+    }
+}
+
+/* ── COMPOSANTS UI ── */
+
+/* Panneau de Filtres */
+.filterPanel {
+    background: #fff;
+    border-radius: 20px;
+    padding: 24px;
+    border: 1px solid rgba(0, 0, 0, 0.06);
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.04);
+}
+
+.filterHeader {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 16px;
+}
+
+.filterTitle {
+    font-size: 1rem;
+    font-weight: 800;
+    color: #000;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin: 0;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.clearBtn {
+    background: none;
+    border: none;
+    color: var(--c-bordeaux);
+    font-size: 0.8rem;
+    cursor: pointer;
+    font-weight: 700;
+}
+
+.filterGrid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 8px;
+}
+
+/* Boutons de filtres utilisant des variables CSS dynamiques */
+.filterBtn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    width: 100%;
+    padding: 9px 6px;
+    border-radius: 100px;
+    font-size: 0.8rem;
+    font-weight: 700;
+    cursor: pointer;
+    border: 2px solid var(--btn-color);
+    background: transparent;
+    color: var(--btn-color);
+    transition: all 0.2s ease;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.filterBtn:hover,
+.filterBtn[data-active="true"] {
+    background: var(--btn-color);
+    color: #fff;
+}
+
+/* Cartes d'Événements */
+.eventCard {
+    display: flex;
+    gap: 16px;
+    padding: 16px;
+    background: #fff;
+    border: 1.5px solid var(--event-color);
+    border-radius: 24px;
+    box-shadow: 0 8px 30px color-mix(in srgb, var(--event-color) 30%, transparent);
+    transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    align-items: center;
+}
+
+.eventCard:hover {
+    transform: translateY(-4px) scale(1.01);
+}
+
+.eventCard[data-past="true"] {
+    opacity: 0.65;
+    filter: grayscale(40%);
+}
+
+.eventDate {
+    background: var(--event-color);
+    border-radius: 16px;
+    padding: 16px;
+    text-align: center;
+    min-width: 80px;
+    color: #000;
+    flex-shrink: 0;
+}
+
+.eventDay {
+    display: block;
+    font-size: 1.6rem;
+    font-weight: 900;
+    line-height: 1;
+}
+
+.eventMonth {
+    display: block;
+    font-size: 0.75rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    margin-top: 4px;
+}
+
+.eventInfo {
+    flex: 1;
+}
+
+.eventTitle {
+    font-size: 1.2rem;
+    font-weight: 800;
+    color: #000;
+    margin-bottom: 4px;
+}
+
+.eventMeta {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    font-size: 0.9rem;
+}
+
+.eventMetaItem {
+    color: var(--c-grey-medium);
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.eventAction {
+    padding: 10px 18px;
+    font-size: 0.8rem;
+    color: #fff;
+    border: none;
+    border-radius: 100px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    white-space: nowrap;
+    text-decoration: none;
+    font-weight: bold;
+}
+
+/* Responsive Cards Mobile */
+@media (max-width: 600px) {
+    .eventCard {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .eventDate {
+        display: flex;
+        width: 100%;
+        justify-content: center;
+        gap: 12px;
+        align-items: baseline;
+        padding: 12px;
+    }
+
+    .eventDay {
+        font-size: 1.2rem;
+    }
+
+    .eventAction {
+        width: 100%;
+        justify-content: center;
+    }
+}
+
+.calendarWrapper {
+    border-radius: 20px;
+    overflow: hidden;
+    border: 1px solid rgba(0, 0, 0, 0.06);
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.04);
+}

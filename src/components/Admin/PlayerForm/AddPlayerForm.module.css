@@ -1,0 +1,258 @@
+/**
+* @file @components/Admin/AddPlayerForm/AddPlayerForm.module.css
+* @author Loann Cordel
+* @date 28/03/2026
+* @description Styles pour le formulaire d'ajout de joueur
+*/
+
+.openBtn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 20px;
+    border-radius: 12px;
+    background: color-mix(in srgb, var(--game-color) 20%, transparent);
+    border: 1px solid color-mix(in srgb, var(--game-color) 50%, transparent);
+    color: var(--game-color);
+    font-weight: 800;
+    font-size: 0.85rem;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.openBtn:hover {
+    background: color-mix(in srgb, var(--game-color) 30%, transparent);
+    transform: translateY(-2px);
+}
+
+.panelWrapper {
+    background: rgba(10, 10, 10, 0.95);
+    border: 1px solid color-mix(in srgb, var(--game-color) 40%, transparent);
+    border-radius: 20px;
+    padding: 28px;
+    max-width: 520px;
+    width: 100%;
+    margin: 0 auto;
+    backdrop-filter: blur(12px);
+}
+
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 24px;
+}
+
+.title {
+    color: #fff;
+    font-weight: 900;
+    font-size: 1.1rem;
+    margin: 0;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.titleIcon {
+    color: var(--game-color);
+}
+
+.closeBtn {
+    background: none;
+    border: none;
+    color: rgba(255, 255, 255, 0.4);
+    font-size: 1.3rem;
+    cursor: pointer;
+    line-height: 1;
+    transition: color 0.2s;
+}
+
+.closeBtn:hover {
+    color: #fff;
+}
+
+/* ── FORM ELEMENTS ── */
+.label {
+    font-size: 0.7rem;
+    font-weight: 700;
+    color: rgba(255, 255, 255, 0.4);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    display: block;
+    margin-bottom: 6px;
+}
+
+.input,
+.select {
+    width: 100%;
+    padding: 10px 14px;
+    background: rgba(255, 255, 255, 0.07);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    border-radius: 10px;
+    font-size: 0.85rem;
+    outline: none;
+    color: #fff;
+    transition: border-color 0.2s;
+}
+
+.input:focus,
+.select:focus {
+    border-color: var(--game-color);
+}
+
+.select {
+    cursor: pointer;
+    appearance: none;
+    background-image: url("data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%23FFFFFF%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22%2F%3E%3C%2Fsvg%3E");
+    background-repeat: no-repeat;
+    background-position: right 14px top 50%;
+    background-size: 10px auto;
+}
+
+.select option {
+    background: #111;
+    color: #fff;
+}
+
+/* ── SEARCH RESULTS ── */
+.resultsWrapper {
+    margin-top: 8px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.resultBtn {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 14px;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid color-mix(in srgb, var(--game-color) 30%, transparent);
+    border-radius: 10px;
+    cursor: pointer;
+    color: #fff;
+    text-align: left;
+    width: 100%;
+    transition: background 0.2s;
+}
+
+.resultBtn:hover {
+    background: rgba(255, 255, 255, 0.1);
+}
+
+.resultName {
+    font-weight: 700;
+    font-size: 0.9rem;
+}
+
+.resultDetails {
+    font-size: 0.72rem;
+    color: var(--game-color);
+    font-weight: 700;
+}
+
+.statusText {
+    color: rgba(255, 255, 255, 0.3);
+    font-size: 0.8rem;
+    margin-top: 8px;
+}
+
+/* ── STEP 2 (Form) ── */
+.formWrapper {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.selectedUserBox {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 14px;
+    background: color-mix(in srgb, var(--game-color) 15%, transparent);
+    border-radius: 10px;
+    border: 1px solid color-mix(in srgb, var(--game-color) 40%, transparent);
+}
+
+.selectedUserName {
+    margin: 0;
+    font-weight: 800;
+    color: #fff;
+    font-size: 0.9rem;
+}
+
+.selectedUserDetails {
+    margin: 0;
+    font-size: 0.7rem;
+    color: var(--game-color);
+}
+
+.changeUserBtn {
+    background: none;
+    border: none;
+    color: rgba(255, 255, 255, 0.35);
+    font-size: 0.75rem;
+    cursor: pointer;
+    font-weight: 600;
+    text-decoration: underline;
+}
+
+.row {
+    display: flex;
+    gap: 12px;
+    align-items: flex-end;
+}
+
+.flex2 {
+    flex: 2;
+}
+
+.flex1 {
+    flex: 1;
+}
+
+.checkboxWrapper {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+    color: rgba(255, 255, 255, 0.6);
+    font-size: 0.82rem;
+    font-weight: 700;
+    padding-bottom: 10px;
+}
+
+.checkbox {
+    width: 16px;
+    height: 16px;
+    accent-color: var(--game-color);
+}
+
+.errorText {
+    color: #e63946;
+    font-size: 0.82rem;
+    font-weight: 600;
+    margin: 0;
+}
+
+.submitBtn {
+    padding: 12px;
+    border-radius: 12px;
+    background: var(--game-color);
+    color: #000;
+    font-weight: 900;
+    font-size: 0.9rem;
+    border: none;
+    cursor: pointer;
+    transition: opacity 0.2s, transform 0.2s;
+}
+
+.submitBtn:hover:not(:disabled) {
+    transform: scale(1.02);
+}
+
+.submitBtn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}

@@ -1,0 +1,210 @@
+/**
+ * @file src/app/le-local/Local.module.css
+ * @author Loann CORDEL
+ * @date 27/03/2026
+ * @description Styles pour la page du local
+ */
+
+.pageContainer {
+    min-height: 100vh;
+    background-color: var(--c-white, #fff);
+}
+
+/* ── HERO SECTION ── */
+.hero {
+    position: relative;
+    padding-top: 160px;
+    padding-bottom: 80px;
+    background: url("/activities/local.jpg") center/cover no-repeat;
+    overflow: hidden;
+}
+
+.heroOverlayColor {
+    position: absolute;
+    inset: 0;
+    background: var(--c-local);
+    opacity: 0.5;
+    mix-blend-mode: multiply;
+}
+
+.heroOverlayGradient {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(to bottom, rgba(0, 0, 0, 1), transparent, rgba(0, 0, 0, 0.8));
+}
+
+.heroContent {
+    position: relative;
+    z-index: 10;
+}
+
+.backBtn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    color: #fff;
+    margin-bottom: 2rem;
+    padding: 8px 20px;
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    font-size: 0.8rem;
+    text-decoration: none;
+    border-radius: 100px;
+    transition: background 0.2s ease;
+}
+
+.backBtn:hover {
+    background: rgba(255, 255, 255, 0.2);
+}
+
+.heroTitleWrapper {
+    display: flex;
+    align-items: center;
+    gap: 24px;
+}
+
+.heroIcon {
+    font-size: 4rem;
+    color: var(--c-local);
+    filter: drop-shadow(0 0 12px rgba(230, 213, 184, 0.8));
+}
+
+.heroTitle {
+    font-size: clamp(2.5rem, 8vw, 4.5rem);
+    color: #fff;
+    margin: 0;
+    font-family: var(--font-heading);
+    line-height: 1;
+}
+
+.heroSubtitle {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: var(--c-local);
+    letter-spacing: 0.05em;
+    margin: 8px 0 0 0;
+}
+
+/* ── CALENDAR SECTION ── */
+.calendarSection {
+    padding-top: 40px;
+    padding-bottom: 80px;
+}
+
+/* ── EQUIPMENT ACCORDION ── */
+.accordionContainer {
+    display: flex;
+    width: 100%;
+    background: #000;
+    border-top: 4px solid var(--c-local);
+    border-bottom: 4px solid var(--c-local);
+}
+
+.eqPanel {
+    flex: 1;
+    position: relative;
+    height: 450px;
+    overflow: hidden;
+    transition: all 0.7s cubic-bezier(0.23, 1, 0.32, 1);
+    cursor: pointer;
+    border-right: 3px solid var(--c-local);
+}
+
+.eqPanel:last-child {
+    border-right: none;
+}
+
+.eqBg {
+    position: absolute;
+    inset: 0;
+    background-size: cover;
+    background-position: center;
+    filter: grayscale(0.6) brightness(0.4);
+    transition: all 0.7s cubic-bezier(0.23, 1, 0.32, 1);
+    will-change: filter, transform;
+}
+
+.eqInfo {
+    position: absolute;
+    inset: 0;
+    padding: 40px;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    z-index: 10;
+    background: linear-gradient(to top, rgba(0, 0, 0, 0.9) 0%, transparent 80%);
+}
+
+.eqIcon {
+    font-size: 2.5rem;
+    color: var(--c-gold);
+    margin-bottom: 15px;
+}
+
+.eqTitle {
+    font-size: 1.5rem;
+    font-weight: 900;
+    color: #fff;
+    text-transform: uppercase;
+    margin: 0;
+}
+
+.eqTags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 15px;
+}
+
+.eqTag {
+    padding: 5px 12px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 100px;
+    font-size: 0.7rem;
+    color: #fff;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+/* Comportement Desktop (Animation Flex) */
+@media (min-width: 768px) {
+    .eqPanel:hover {
+        flex: 2;
+    }
+
+    .eqPanel:hover .eqBg {
+        filter: grayscale(0) brightness(0.7);
+        transform: scale(1.05);
+    }
+}
+
+/* Comportement Mobile (Empilement vertical) */
+@media (max-width: 767px) {
+    .accordionContainer {
+        flex-direction: column;
+        height: auto;
+        /* Sécurité pour garantir que le parent englobe ses enfants */
+    }
+
+    .eqPanel {
+        flex: none;
+        /* CORRECTION CRITIQUE : on annule le flex-basis: 0% */
+        width: 100%;
+        height: 250px;
+        border-right: none;
+        border-bottom: 3px solid var(--c-local);
+    }
+
+    .eqPanel:last-child {
+        border-bottom: none;
+    }
+
+    .eqBg {
+        /* Plus lumineux par défaut sur mobile car pas de hover possible */
+        filter: grayscale(0.2) brightness(0.6);
+    }
+
+    .eqInfo {
+        padding: 24px;
+    }
+}

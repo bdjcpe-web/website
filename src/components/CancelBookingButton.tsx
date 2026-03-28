@@ -1,6 +1,13 @@
+/**
+ * @file CancelBookingButton.tsx
+ * @author Loann CORDEL
+ * @date 27/03/2026
+ * @description Bouton pour annuler une réservation
+ */
+
 'use client';
 import { useState } from 'react';
-import { cancelBookingAndNotify } from '../api/admin/cancel-reservation/actions';
+import { cancelBookingAndNotify } from '@/app/api/admin/cancel-reservation/actions';
 
 export default function CancelBookingButton({ bookingId }: { bookingId: string }) {
   const [isCancelling, setIsCancelling] = useState(false);

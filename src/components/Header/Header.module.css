@@ -6,6 +6,10 @@
  */
 
 /* STRUCTURE DE BASE */
+.navBar {
+    border-bottom: 2px solid var(--c-bordeaux);
+}
+
 .headerContainer {
     display: flex;
     align-items: center;
@@ -53,7 +57,7 @@
     display: none;
 }
 
-@media (max-width: 1024px) {
+@media (max-width: 1300px) {
     .desktopOnly {
         display: none !important;
     }
@@ -82,8 +86,7 @@
     border-radius: 50px;
     cursor: pointer;
 
-    /* 🏆 LE DÉGRADÉ GOLD (Adieu la palette BDJ) */
-    /* On crée un dégradé très large (200%) avec des reflets sombres et très clairs */
+    /* DÉGRADÉ GOLD */
     background: linear-gradient(100deg,
             #B38728 0%,
             #FBF5B7 25%,
@@ -118,8 +121,7 @@
     background-position: right center;
 }
 
-/* 📱 RESPONSIVE (On le transforme en rond parfait sur mobile) */
-@media (max-width: 1024px) {
+@media (max-width: 1300px) {
     .crownCta {
         padding: 0;
         width: 44px;

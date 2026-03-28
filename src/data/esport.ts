@@ -1,9 +1,24 @@
-// LoL tiers (in order): Iron, Bronze, Silver, Gold, Platinum, Emerald, Diamond, Master, Grandmaster, Challenger
-// RL tiers: Bronze, Silver, Gold, Platinum, Diamond, Champion, Grand Champion, Supersonic Legend
+/**
+ * @file @data/esport.ts
+ * @author Loann Cordel
+ * @date 28/03/2026
+ * @description Données pour toutes les pages esport
+ */
+
+// ── CONSTANTES POUR LES FORMULAIRES (ADMIN) ──
+export const LOL_ROLES = ['Top', 'Jungle', 'Mid', 'ADC', 'Support', 'Sub'];
+export const RL_ROLES = ['Gardien', 'Scorer', 'Tactician', 'Sub'];
+
+export const LOL_TIERS = ['Iron', 'Bronze', 'Silver', 'Gold', 'Platinum', 'Emerald', 'Diamond', 'Master', 'Grandmaster', 'Challenger', 'Unranked'];
+export const RL_TIERS = ['Bronze', 'Silver', 'Gold', 'Platinum', 'Diamond', 'Champion', 'GC', 'SSL', 'Unranked'];
+
+export const DIVISIONS = ['I', 'II', 'III', 'IV'];
+export const NO_DIVISION_TIERS = ['Master', 'Grandmaster', 'Challenger', 'Unranked', 'SSL'];
+
 export type RankTier =
   | 'Iron' | 'Bronze' | 'Silver' | 'Gold' | 'Platinum' | 'Emerald' | 'Diamond'
   | 'Master' | 'Grandmaster' | 'Challenger'
-  | 'Champion' | 'Grand Champion' | 'Supersonic Legend'
+  | 'Champion' | 'GC' | 'SSL'
   | 'Unranked';
 
 export const RANK_COLORS: Record<string, string> = {
@@ -18,12 +33,11 @@ export const RANK_COLORS: Record<string, string> = {
   Grandmaster: '#e84f4f',
   Challenger: '#f4c842',
   Champion: '#a855f7',
-  'Grand Champion': '#ef4444',
-  'Supersonic Legend': '#ffffff',
+  GC: '#ef4444',
+  SSL: '#ffffff',
   Unranked: '#4b5563',
 };
 
-// Paths to rank emblem images in /public/
 export const LOL_RANK_ICONS: Record<string, string> = {
   Iron: '/ranks/lol/iron.webp',
   Bronze: '/ranks/lol/bronze.webp',
@@ -34,22 +48,49 @@ export const LOL_RANK_ICONS: Record<string, string> = {
   Diamond: '/ranks/lol/diamond.png',
   Master: '/ranks/lol/master.webp',
   Grandmaster: '/ranks/lol/grandmaster.webp',
-  Challenger: '/ranks/lol/grandmaster.webp', // fallback — add challenger.webp to unlock
+  Challenger: '/ranks/lol/challenger.webp',
   Unranked: '',
 };
 
 export const RL_RANK_ICONS: Record<string, string> = {
-  // Champions (I=1, II=2, III=3)
   'Champion I': '/ranks/rl/champion1.webp',
   'Champion II': '/ranks/rl/champion2.webp',
   'Champion III': '/ranks/rl/champion3.webp',
-  // Grand Champions
-  'Grand Champion I': '/ranks/rl/gc1.png',
-  'Grand Champion II': '/ranks/rl/gc2.webp',
-  'Grand Champion III': '/ranks/rl/gc3.png',
-  // Supersonic Legend has no division
-  'Supersonic Legend': '/ranks/rl/ssl.webp',
+  'GC I': '/ranks/rl/gc1.png',
+  'GC II': '/ranks/rl/gc2.webp',
+  'GC III': '/ranks/rl/gc3.png',
+  'SSL': '/ranks/rl/ssl.webp',
   Unranked: '',
+};
+
+export const GAME_RANK_ICONS: Record<string, Record<string, string>> = {
+  'league-of-legends': LOL_RANK_ICONS,
+  'rocket-league': RL_RANK_ICONS,
+  'valorant': {},
+  'cs2': {},
+};
+
+export const LOL_ROLE_ICON_FILES: Record<string, string> = {
+  Top: '/roles/top.png',
+  Jungle: '/roles/Jgl.png',
+  Mid: '/roles/mid.png',
+  ADC: '/roles/adc.png',
+  Support: '/roles/sup.png',
+  Sub: '/roles/sub-lol.png',
+};
+
+export const RL_ROLE_ICON_FILES: Record<string, string> = {
+  Scorer: '/roles/scorer.png',
+  Gardien: '/roles/goalie.png',
+  Tactician: '/roles/tactician.png',
+  Sub: '/roles/sub-rl.png',
+};
+
+export const GAME_ROLE_ICONS: Record<string, Record<string, string>> = {
+  'league-of-legends': LOL_ROLE_ICON_FILES,
+  'rocket-league': RL_ROLE_ICON_FILES,
+  'valorant': {},
+  'cs2': {},
 };
 
 export type Player = {
@@ -58,7 +99,7 @@ export type Player = {
   isSub?: boolean;
   profileLink?: string;
   Id?: string;
-  quote?: string;
+  dbId?: string;
   rank?: {
     tier: RankTier;
     division?: 'I' | 'II' | 'III' | 'IV';
@@ -89,37 +130,31 @@ export const esportGames: EsportGame[] = [
       {
         name: 'EL HASSANI Bassim (4ETI)', role: 'Top', Id: 'ELHbss#euw',
         profileLink: 'https://www.op.gg/summoners/euw/ELHbss-euw',
-        quote: '"Les baguins s\'en vont, les kills restent."',
         rank: { tier: 'Emerald', division: 'I', lp: 67 },
       },
       {
         name: 'GIRAUD Loric (4ETI)', role: 'Jungle', Id: 'Ewookiz#EUW',
         profileLink: 'https://www.op.gg/summoners/euw/Ewookiz-EUW',
-        quote: '"Je gank, donc je suis."',
         rank: { tier: 'Platinum', division: 'III', lp: 30 },
       },
       {
         name: 'DI GIOVANNI Loris (4ETI)', role: 'Mid', Id: 'Darlio#Zeubi',
         profileLink: 'https://www.op.gg/summoners/euw/Darlio-Zeubi',
-        quote: '"Mid diff ou rien."',
         rank: { tier: 'Platinum', division: 'I', lp: 16 },
       },
       {
         name: 'MATHELIN Yann (4ETI)', role: 'ADC', Id: 'Matychoco#EUW',
         profileLink: 'https://www.op.gg/summoners/euw/Matychoco-EUW',
-        quote: '"Peel me ou perds."',
         rank: { tier: 'Emerald', division: 'III', lp: 64 },
       },
       {
         name: 'LE COZ Tugdual (4ETI)', role: 'Support', Id: 'IleErable#666',
         profileLink: 'https://www.op.gg/summoners/euw/IleErable-666',
-        quote: '"Vision is power. Les autres l\'ignorent."',
         rank: { tier: 'Gold', division: 'IV', lp: 72 },
       },
       {
         name: 'VIRY Thomas (4ETI)', role: 'Sub', isSub: true, Id: 'VIT madose#EUW',
         profileLink: 'https://www.op.gg/summoners/euw/VIT%20madose-EUW',
-        quote: '"Toujours prêt, jamais titulaire."',
         rank: { tier: 'Diamond', division: 'IV', lp: 2 },
       },
     ],
@@ -135,19 +170,16 @@ export const esportGames: EsportGame[] = [
       {
         name: 'GOLAY Tom (4ETI)', role: 'Attaquant', Id: 'Splaash',
         profileLink: 'https://rocketleague.tracker.network/rocket-league/profile/steam/76561198254144018/overview',
-        quote: '"Mes shots défient la gravité."',
         rank: { tier: 'Champion', division: 'III', lp: 820 },
       },
       {
         name: 'MERCIER Tom (4ETI)', role: 'Milieu', Id: 'Tomyfr.',
         profileLink: 'https://rocketleague.tracker.network/rocket-league/profile/epic/Tomyfr./overview',
-        quote: '"Le terrain, je le vois avant tout le monde."',
-        rank: { tier: 'Grand Champion', division: 'I', lp: 340 },
+        rank: { tier: 'GC', division: 'I', lp: 340 },
       },
       {
         name: 'LEMOINE Jules (3ETI)', role: 'Défenseur', Id: 'ObbLx',
         profileLink: 'https://rocketleague.tracker.network/rocket-league/profile/epic/ObbLx/overview',
-        quote: '"Aucun but ne passe par moi."',
         rank: { tier: 'Champion', division: 'I', lp: 180 },
       },
     ],
@@ -170,4 +202,25 @@ export const esportGames: EsportGame[] = [
     recruiting: true,
     players: [],
   },
+];
+
+export const MONTHS = ['Sep', 'Oct', 'Nov', 'Déc', 'Jan', 'Fév', 'Mar', 'Avr', 'Mai', 'Jun', 'Jul'];
+
+export const LEAGUES = [
+  { name: 'PORO Ligue', game: 'League of Legends', color: '#ffdf9a', start: 5, end: 8, url: 'https://ligueporo.fr' },
+  { name: 'RBRS', game: 'Rocket League', color: '#1a9ef6', start: 1, end: 3, url: 'https://rbrs.rocketbaguette.com/' },
+  { name: 'RBRS', game: 'Rocket League', color: '#1a9ef6', start: 7, end: 9, url: 'https://rbrs.rocketbaguette.com/' },
+];
+
+export const JERSEY_FEATURES = [
+  { icon: 'ph-paint-brush', label: 'Design', value: 'Spized' },
+  { icon: 'ph-handshake', label: 'Sponsor principal', value: 'Sopra Steria' },
+  { icon: 'ph-graduation-cap', label: 'École', value: 'CPE Lyon' },
+];
+
+export const TWITCH_FEATURES = [
+  'Compétitions inter-écoles',
+  'Accompagnement et session coaching',
+  'Diffusion de tous les matchs sur notre chaîne Twitch officielle',
+  'LANs et déplacements nationaux'
 ];

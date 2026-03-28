@@ -1,0 +1,485 @@
+/* src/app/esport/[jeu]/Jeu.module.css */
+
+.pageContainer {
+    min-height: 100vh;
+    background-color: #050505;
+    position: relative;
+    overflow: hidden;
+}
+
+/* ── BACKGROUNDS ── */
+.bgImage {
+    position: fixed;
+    inset: 0;
+    background-size: cover;
+    background-position: center 20%;
+    opacity: 0.15;
+    filter: grayscale(0.5);
+    z-index: 1;
+}
+
+.bgGradient {
+    position: fixed;
+    inset: 0;
+    background: radial-gradient(circle at 50% 0%, color-mix(in srgb, var(--game-color) 15%, transparent) 0%, transparent 70%);
+    z-index: 2;
+}
+
+.contentWrapper {
+    position: relative;
+    z-index: 10;
+}
+
+/* ── HEADER ── */
+.headerSection {
+    padding-top: 140px;
+    padding-bottom: 60px;
+}
+
+.backBtn {
+    color: rgba(255, 255, 255, 0.5);
+    margin-bottom: 30px;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 12px;
+    padding: 8px 16px;
+    text-decoration: none;
+    font-size: 0.85rem;
+    font-weight: 700;
+    transition: background 0.2s ease;
+}
+
+.backBtn:hover {
+    background: rgba(255, 255, 255, 0.1);
+    color: #fff;
+}
+
+.headerContent {
+    display: flex;
+    align-items: center;
+    gap: 32px;
+}
+
+.gameLogo {
+    height: 80px;
+    width: auto;
+    object-fit: contain;
+    filter: drop-shadow(0 0 20px color-mix(in srgb, var(--game-color) 60%, transparent));
+}
+
+.headerText {
+    flex: 1;
+}
+
+.headerSub {
+    color: var(--game-color);
+    font-weight: 800;
+    letter-spacing: 0.3em;
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    margin-bottom: 8px;
+}
+
+.headerTitle {
+    font-size: clamp(2.5rem, 6vw, 5rem);
+    font-weight: 950;
+    color: #fff;
+    margin: 0;
+    line-height: 1.1;
+    text-transform: uppercase;
+}
+
+/* La fameuse ligne de séparation (Large -> Fade) */
+.headerDivider {
+    height: 1px;
+    width: 100%;
+    margin-top: 12px;
+    background: linear-gradient(to right, var(--game-color), transparent);
+    border-radius: 3px;
+}
+
+/* ── RECRUITMENT BANNER ── */
+.recruitmentSection {
+    padding-bottom: 80px;
+}
+
+.recruitBanner {
+    background: linear-gradient(135deg, color-mix(in srgb, var(--game-color) 18%, transparent) 0%, color-mix(in srgb, var(--game-color) 8%, transparent) 100%);
+    border: 1.5px solid color-mix(in srgb, var(--game-color) 80%, transparent);
+    border-radius: 24px;
+    padding: 40px 48px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 32px;
+    flex-wrap: wrap;
+    box-shadow: 0 0 60px color-mix(in srgb, var(--game-color) 20%, transparent);
+}
+
+.recruitLeft {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+
+.recruitDot {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background: var(--game-color);
+    box-shadow: 0 0 12px var(--game-color);
+    flex-shrink: 0;
+}
+
+.recruitSub {
+    font-size: 0.7rem;
+    font-weight: 800;
+    color: var(--game-color);
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    margin: 0 0 6px 0;
+}
+
+.recruitTitle {
+    font-size: 1.4rem;
+    font-weight: 900;
+    color: #fff;
+    margin: 0 0 8px 0;
+}
+
+.recruitDesc {
+    color: rgba(255, 255, 255, 0.5);
+    font-size: 0.9rem;
+    margin: 0;
+}
+
+.recruitBtn {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    padding: 14px 28px;
+    background: #5865F2;
+    color: #fff;
+    border-radius: 12px;
+    font-weight: 800;
+    font-size: 0.9rem;
+    text-decoration: none;
+    white-space: nowrap;
+    box-shadow: 0 8px 24px rgba(88, 101, 242, 0.4);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.recruitBtn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 12px 30px rgba(88, 101, 242, 0.6);
+}
+
+/* ── ROSTER GRIDS ── */
+.rosterSection {
+    padding-bottom: 60px;
+}
+
+.rosterGrid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    justify-content: center;
+}
+
+.subsTitle {
+    font-size: 0.65rem;
+    font-weight: 800;
+    color: rgba(255, 255, 255, 0.22);
+    letter-spacing: 0.28em;
+    text-transform: uppercase;
+    margin-bottom: 20px;
+    text-align: center;
+}
+
+/* ── PLAYER CARD (Desktop = Vertical) ── */
+.playerCard {
+    width: 180px;
+    min-height: 380px;
+    flex-shrink: 0;
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 20px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    text-decoration: none;
+    position: relative;
+    overflow: hidden;
+    padding-top: 20px;
+}
+
+.playerCard:hover {
+    transform: translateY(-10px) scale(1.02);
+    background: rgba(255, 255, 255, 0.07);
+    border-color: color-mix(in srgb, var(--game-color) 60%, transparent);
+    box-shadow: 0 20px 50px color-mix(in srgb, var(--game-color) 25%, transparent);
+}
+
+.cardTopAccent {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: var(--game-color);
+    box-shadow: 0 0 12px var(--game-color);
+}
+
+.cardRoleSection {
+    padding: 12px 16px 10px;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+}
+
+.cardRoleIconWrapper {
+    height: 44px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.cardRoleImg {
+    height: 100%;
+    filter: drop-shadow(0 0 8px color-mix(in srgb, var(--game-color) 60%, transparent));
+}
+
+.cardRoleFallback {
+    font-size: 2rem;
+    color: var(--game-color);
+}
+
+.cardRoleText {
+    font-size: 0.65rem;
+    font-weight: 800;
+    color: var(--game-color);
+    letter-spacing: 0.15em;
+    margin: 0;
+    text-transform: uppercase;
+}
+
+.cardDivider {
+    height: 1px;
+    background: linear-gradient(to right, transparent, color-mix(in srgb, var(--game-color) 50%, transparent), transparent);
+    margin: 0 16px;
+}
+
+.cardInfoSection {
+    padding: 14px 16px 16px;
+    text-align: center;
+}
+
+.cardPlayerId {
+    font-size: 1.15rem;
+    font-weight: 900;
+    color: #fff;
+    margin: 0 0 6px 0;
+    line-height: 1.1;
+}
+
+.cardPlayerName {
+    font-size: 0.6rem;
+    color: rgba(255, 255, 255, 0.35);
+    margin: 0;
+    line-height: 1.5;
+}
+
+.cardRankSection {
+    padding: 14px 16px 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+}
+
+.cardRankEmblem {
+    height: 44px;
+    filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.5));
+}
+
+.cardRankBadge {
+    font-size: 0.65rem;
+    font-weight: 900;
+    padding: 3px 10px;
+    border-radius: 100px;
+    text-transform: uppercase;
+}
+
+.cardFooter {
+    text-align: center;
+    font-size: 0.55rem;
+    color: rgba(255, 255, 255, 0.2);
+    padding: 0 12px 12px;
+    margin: 0;
+    letter-spacing: 0.05em;
+}
+
+/* ── ADMIN SECTION ── */
+.adminDivider {
+    width: 100%;
+    max-width: 520px;
+    height: 1px;
+    background: linear-gradient(to right, transparent, color-mix(in srgb, var(--game-color) 30%, transparent), transparent);
+    margin-bottom: 20px;
+}
+
+
+/* ── CORRECTIONS MOBILE ── */
+@media (max-width: 767px) {
+
+    /* HEADER : Empilement Titre et Logo */
+    .headerContent {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 20px;
+    }
+
+    .gameLogo {
+        height: 60px;
+        /* Légèrement plus petit sur mobile */
+    }
+
+    .headerTitle {
+        font-size: 2rem;
+    }
+
+    .headerDivider {
+        max-width: 100%;
+        /* La ligne prend toute la largeur sur mobile */
+    }
+
+    /* CARTES JOUEURS : Bascule à l'horizontale */
+    .rosterGrid {
+        flex-direction: column;
+        align-items: stretch;
+        /* Les cartes prennent toute la largeur dispo */
+    }
+
+    .playerCard {
+        width: 100%;
+        min-height: auto;
+        /* On annule la hauteur forcée */
+        flex-direction: row;
+        /* Disposition horizontale */
+        align-items: center;
+        padding: 16px;
+    }
+
+    .playerCard:hover {
+        transform: scale(1.02);
+        /* On annule la translation Y sur mobile */
+    }
+
+    /* On passe la barre colorée d'accentuation à GAUCHE plutôt qu'en HAUT */
+    .cardTopAccent {
+        top: 0;
+        bottom: 0;
+        left: 0;
+        right: auto;
+        width: 4px;
+        height: 100%;
+    }
+
+    /* On cache certains éléments superflus sur mobile pour gagner de la place */
+    .cardRoleText,
+    .cardDivider,
+    .cardFooter {
+        display: none;
+    }
+
+    /* Réorganisation interne du contenu de la carte */
+    .cardRoleSection {
+        padding: 0 16px 0 0;
+        /* Plus de marges haut/bas, juste à droite */
+    }
+
+    .cardInfoSection {
+        flex: 1;
+        /* Le nom du joueur prend tout l'espace central */
+        text-align: left;
+        padding: 0;
+    }
+
+    .cardPlayerId {
+        font-size: 1.2rem;
+    }
+
+    .cardRankSection {
+        padding: 0;
+        flex-direction: column;
+        /* L'emblème et le texte du rang côte à côte */
+        align-items: center;
+        gap: 12px;
+    }
+
+    /* Le badge de rang prend trop de place sur mobile, on ne garde que l'image */
+    .cardRankBadge {
+        display: flex;
+        width: 100px;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .cardRankEmblem {
+        height: 36px;
+        /* Plus petit */
+    }
+
+    /* BANNIERE RECRUTEMENT */
+    .recruitBanner {
+        flex-direction: column;
+        align-items: flex-start;
+        padding: 24px;
+    }
+
+    .recruitLeft {
+        align-items: flex-start;
+    }
+
+    .recruitDot {
+        margin-top: 6px;
+    }
+}
+
+/* ── ICÔNE DE LIEN PROFIL (En haut à droite) ── */
+.profileLinkIcon {
+    position: absolute;
+    top: -1px;
+    /* Chevauche la bordure haute */
+    right: -1px;
+    /* Chevauche la bordure droite */
+    width: 36px;
+    height: 36px;
+    /* On utilise la couleur du jeu avec une légère transparence */
+    background: color-mix(in srgb, var(--game-color) 15%, transparent);
+    border-left: 1px solid color-mix(in srgb, var(--game-color) 30%, transparent);
+    border-bottom: 1px solid color-mix(in srgb, var(--game-color) 30%, transparent);
+
+    /* LE SECRET : L'arrondi en haut à droite correspond à celui de la carte (20px).
+       L'arrondi en bas à gauche crée l'effet "étiquette". */
+    border-radius: 0 20px 0 16px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--game-color);
+    font-size: 1.1rem;
+    transition: all 0.3s ease;
+    z-index: 5;
+}
+
+/* Effet au survol de la carte entière (PC) */
+.playerCard:hover .profileLinkIcon {
+    background: var(--game-color);
+    color: #fff;
+}

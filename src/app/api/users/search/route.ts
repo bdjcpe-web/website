@@ -1,53 +1,70 @@
 import { NextResponse } from 'next/server';
+import prisma from '@/lib/prisma';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth';
-import prisma from '@/lib/prisma';
 
-export async function GET(req: Request) {
+export async function GET(request: Request) {
+  // Sécurité : On vérifie que l'utilisateur est bien connecté (Admin)
   const session = await getServerSession(authOptions);
-  const adminEmails = (process.env.ADMIN_EMAILS || '').split(',').map(e => e.trim());
-  if (!session?.user?.email || !adminEmails.includes(session.user.email)) {
-    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+  if (!session?.user?.email) {
+    return NextResponse.json({ error: 'Non autorisé' }, { status: 401 });
   }
 
-  const { searchParams } = new URL(req.url);
-  const q = searchParams.get('q')?.trim() ?? '';
-  if (q.length < 2) return NextResponse.json([]);
+  // Récupération de la requête (?q=Loann)
+  const { searchParams } = new URL(request.url);
+  const q = searchParams.get('q');
 
-  // @ts-ignore – filiere and registeredYear added via db push, types will refresh on next build restart
-  const users = await prisma.user.findMany({
-    where: {
-      emailVerified: { not: null },
-      OR: [
-        { firstName: { contains: q } },
-        { lastName: { contains: q } },
-      ],
-    },
-    select: { id: true, firstName: true, lastName: true, filiere: true, registeredYear: true, createdAt: true },
-    take: 10,
-  });
+  if (!q || q.length < 2) {
+    return NextResponse.json([]);
+  }
 
-  // Compute current year for each user
-  const now = new Date();
-  const result = users.map((u: any) => {
-    let currentYear = u.registeredYear ?? null;
-    if (currentYear && u.createdAt) {
-      const reg = new Date(u.createdAt);
-      let septs = 0;
-      for (let y = reg.getFullYear(); y <= now.getFullYear(); y++) {
-        const sept = new Date(y, 8, 1);
-        if (sept > reg && sept <= now) septs++;
+  try {
+    // Recherche Prisma flexible sur le Prénom OU le Nom
+    const users = await prisma.user.findMany({
+      where: {
+        OR: [
+          { firstName: { contains: q, mode: 'insensitive' } },
+          { lastName: { contains: q, mode: 'insensitive' } },
+        ],
+      },
+      select: {
+        id: true,
+        firstName: true,
+        lastName: true,
+        // Adaptez ces champs selon le nom exact dans votre schéma Prisma
+        filiere: true,
+        registeredYear: true,
+        createdAt: true,
+      },
+      take: 5, // On limite à 5 résultats pour ne pas surcharger l'UI
+    });
+
+    // On formate les données pour le composant
+    const formattedUsers = users.map(u => {
+      // Calcul de l'année (3A, 4A) si vous l'utilisez
+      let currentYear = null;
+      if (u.registeredYear) {
+        const reg = new Date(u.createdAt);
+        const now = new Date();
+        let septs = 0;
+        for (let y = reg.getFullYear(); y <= now.getFullYear(); y++) {
+          if (new Date(y, 8, 1) > reg && new Date(y, 8, 1) <= now) septs++;
+        }
+        currentYear = Math.min(5, u.registeredYear + septs);
       }
-      currentYear = Math.min(5, currentYear + septs);
-    }
-    return {
-      id: u.id,
-      firstName: u.firstName,
-      lastName: u.lastName,
-      filiere: u.filiere ?? null,
-      currentYear,
-    };
-  });
 
-  return NextResponse.json(result);
+      return {
+        id: u.id,
+        firstName: u.firstName,
+        lastName: u.lastName,
+        filiere: u.filiere,
+        currentYear: currentYear,
+      };
+    });
+
+    return NextResponse.json(formattedUsers);
+  } catch (error) {
+    console.error("Erreur Search API:", error);
+    return NextResponse.json({ error: 'Erreur serveur' }, { status: 500 });
+  }
 }

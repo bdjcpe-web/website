@@ -100,7 +100,7 @@ export default async function HomePage() {
             auprès de joueurs passionnés.
           </p>
 
-          <Link href="/poles/esport" className="btn btn-esport">
+          <Link href="/esport" className="btn btn-esport">
             En savoir plus
           </Link>
         </div>

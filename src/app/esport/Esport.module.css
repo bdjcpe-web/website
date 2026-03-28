@@ -1,0 +1,656 @@
+/**
+ * @file src/app/esport/Esport.module.css
+ * @author Loann Cordel
+ * @date 27/03/2026
+ * @description Styles pour la page esport
+ */
+
+.pageWrapper {
+    min-height: 100vh;
+    background-color: #000;
+    display: flex;
+    flex-direction: column;
+    overflow-x: hidden;
+    position: relative;
+    margin-top: 80px;
+}
+
+.redGlow {
+    position: fixed;
+    inset: 0;
+    background: radial-gradient(circle at 50% 50%, rgba(255, 0, 77, 0.05) 0%, transparent 80%);
+    z-index: 1;
+    pointer-events: none;
+}
+
+.contentWrapper {
+    position: relative;
+    z-index: 10;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+/* ── HEADER & CAROUSEL ── */
+.Header {
+    text-align: center;
+}
+
+.carouselSub {
+    font-size: 0.7rem;
+    font-weight: 800;
+    color: rgba(255, 26, 60, 0.7);
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    margin-bottom: 12px;
+}
+
+.carouselTitle {
+    font-size: clamp(2rem, 5vw, 3.5rem);
+    font-weight: 950;
+    color: #fff;
+    margin: 0;
+    line-height: 1.1;
+}
+
+.highlight {
+    color: var(--c-esport, #ff1a3c);
+}
+
+.carouselDesc {
+    color: rgba(255, 255, 255, 0.35);
+    font-size: 0.95rem;
+    margin-top: 12px;
+    margin-bottom: 40px;
+}
+
+.carouselSection {
+    border-top: 2px solid rgba(255, 26, 60, 0.3);
+    border-bottom: 2px solid rgba(255, 26, 60, 0.3);
+    background-color: #000;
+    padding: 20px 0;
+}
+
+/* Desktop: Penché et Horizontal */
+.carouselTrack {
+    width: 85%;
+    margin: 0 auto;
+    height: 58vh;
+    display: flex;
+    gap: 10px;
+    transform: skewX(-10deg);
+    overflow: hidden;
+    border: 1px solid rgba(255, 26, 60, 0.2);
+}
+
+.gamePanel {
+    flex: 1;
+    position: relative;
+    transition: all 0.6s cubic-bezier(0.23, 1, 0.32, 1);
+    overflow: hidden;
+    text-decoration: none;
+    display: block;
+}
+
+.bgWrapper {
+    position: absolute;
+    inset: -20%;
+    transform: skewX(10deg);
+}
+
+.gameBg {
+    position: absolute;
+    inset: 0;
+    background-size: cover;
+    background-position: center;
+    filter: grayscale(0.5) brightness(0.65);
+    transition: all 0.6s cubic-bezier(0.23, 1, 0.32, 1);
+    will-change: transform, filter;
+}
+
+.gameOverlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(to top, #000 0%, transparent 100%);
+    opacity: 0.8;
+    transition: opacity 0.4s;
+}
+
+.gameContent {
+    position: relative;
+    z-index: 10;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-end;
+    padding: 30px 20px;
+    transform: skewX(10deg) translateX(-15px);
+    text-align: center;
+}
+
+.gameLogo {
+    height: 100px;
+    width: auto;
+    object-fit: contain;
+    margin-bottom: 20px;
+    transition: transform 0.4s;
+    will-change: transform;
+}
+
+.gameName {
+    font-family: var(--font-heading);
+    font-size: 1.6rem;
+    font-weight: 950;
+    color: #fff;
+    text-transform: uppercase;
+    margin: 0;
+}
+
+.gameStatus {
+    font-weight: 800;
+    font-size: 0.75rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    margin-top: 8px;
+}
+
+.neonBorder {
+    position: absolute;
+    inset: 0;
+    opacity: 0;
+    transition: opacity 0.3s;
+    z-index: 5;
+    pointer-events: none;
+}
+
+/* ── INFO & TWITCH SECTION ── */
+.infoWrapper {
+    padding: 80px 24px;
+}
+
+.twitchGrid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 400px), 1fr));
+    gap: 60px;
+    align-items: center;
+}
+
+.infoContent {
+    display: flex;
+    flex-direction: column;
+}
+
+.twitchList {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.twitchListItem {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    color: rgba(255, 255, 255, 0.7);
+    font-size: 1.05rem;
+    line-height: 1.5;
+}
+
+.twitchCheck {
+    color: var(--c-esport, #ff1a3c);
+    font-size: 1.4rem;
+    flex-shrink: 0;
+    margin-top: 2px;
+}
+
+/* Le lecteur vidéo */
+.twitchVideoWrapper {
+    position: relative;
+}
+
+.twitchGlow {
+    position: absolute;
+    inset: -20px;
+    background: var(--c-bordeaux);
+    filter: blur(60px);
+    opacity: 0.1;
+}
+
+.twitchPlayer {
+    background: #0a0a0a;
+    border-radius: 32px;
+    overflow: hidden;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    box-shadow: 0 30px 60px rgba(0, 0, 0, 0.5);
+    position: relative;
+    z-index: 2;
+}
+
+.liveHeader {
+    padding: 16px 24px;
+    background: #9146FF;
+    color: #fff;
+    font-weight: 900;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 0.8rem;
+}
+
+.pulseDot {
+    width: 8px;
+    height: 8px;
+    background: #ff4b4b;
+    border-radius: 50%;
+    animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+    0% {
+        transform: scale(1);
+        opacity: 1;
+    }
+
+    50% {
+        transform: scale(1.5);
+        opacity: 0.5;
+    }
+
+    100% {
+        transform: scale(1);
+        opacity: 1;
+    }
+}
+
+/* ── LEAGUES SECTION ── */
+.leaguesWrapper {
+    border-top: 2px solid rgba(255, 26, 60, 0.3);
+    padding-top: 60px;
+}
+
+.timelineScroll {
+    overflow-x: auto;
+    padding-bottom: 20px;
+}
+
+.timelineMin {
+    min-width: 700px;
+}
+
+/* Grille de la timeline (11 mois + 1 colonne pour le nom du jeu) */
+.timelineRow,
+.timelineHeaderRow {
+    display: grid;
+    grid-template-columns: 140px repeat(11, 1fr);
+    gap: 0;
+    align-items: center;
+}
+
+.timelineRow {
+    margin-bottom: 12px;
+}
+
+.timelineHeaderRow {
+    margin-bottom: 8px;
+}
+
+.monthHeader {
+    text-align: center;
+    font-size: 0.65rem;
+    font-weight: 800;
+    color: rgba(255, 255, 255, 0.35);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    padding-bottom: 8px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.gameLabelText {
+    font-size: 0.65rem;
+    font-weight: 800;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    margin: 0;
+}
+
+.desktopName {
+    display: inline;
+}
+
+.mobileName {
+    display: none;
+}
+
+/* Cellules et blocs de la timeline */
+.leagueCell {
+    padding: 4px 6px;
+    position: relative;
+    z-index: 1;
+}
+
+.leagueBlock {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 9px 14px;
+    border-radius: 8px;
+    text-decoration: none;
+    transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275), box-shadow 0.2s, filter 0.2s;
+}
+
+.leagueBlock:hover {
+    transform: translateY(-3px) scale(1.02);
+    filter: brightness(1.15);
+}
+
+.leagueDot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    flex-shrink: 0;
+}
+
+.leagueName {
+    margin: 0;
+    font-size: 0.78rem;
+    font-weight: 800;
+    color: #fff;
+    line-height: 1.2;
+}
+
+.leagueDates {
+    margin: 0;
+    font-size: 0.6rem;
+    font-weight: 600;
+}
+
+.emptyCell {
+    padding: 4px 6px;
+}
+
+.emptyBlock {
+    height: 42px;
+    border-radius: 8px;
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.leagueDesc {
+    font-size: 0.72rem;
+    color: rgba(255, 255, 255, 0.4);
+    margin-bottom: 20px;
+    font-style: italic;
+}
+
+/* ── CORRECTIONS MOBILE (Mettez à jour la fin de votre fichier) ── */
+@media (max-width: 767px) {
+    /* ... vos autres styles mobiles ... */
+
+    .timelineRow,
+    .timelineHeaderRow {
+        /* On réduit la colonne de gauche de 140px à 80px sur mobile */
+        grid-template-columns: 80px repeat(11, 1fr);
+    }
+
+    .desktopName {
+        display: none;
+    }
+
+    .mobileName {
+        display: inline;
+    }
+
+    .gameLabelText {
+        font-size: 0.7rem;
+        /* Un peu plus gros pour les acronymes courts */
+    }
+}
+
+/* ── JERSEY SECTION ── */
+.jerseySection {
+    border-top: 2px solid rgba(255, 26, 60, 0.3);
+    border-bottom: 2px solid rgba(255, 26, 60, 0.3);
+    padding: 60px 0;
+}
+
+.jerseyLayout {
+    display: grid;
+    /* Disposition Desktop par défaut */
+    grid-template-columns: 1fr 1fr;
+    grid-template-areas:
+        "visual header"
+        "visual features";
+}
+
+.jerseyTitle {
+    margin-bottom: 20px;
+}
+
+.jerseyDesc {
+    color: rgba(255, 255, 255, 0.55);
+    font-size: 1rem;
+    line-height: 1.8;
+    margin-bottom: 36px;
+}
+
+/* -- Visuel -- */
+.jerseyVisual {
+    grid-area: visual;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.jerseyImage {
+    height: 420px;
+    width: auto;
+    object-fit: contain;
+    position: relative;
+    filter: brightness(0.75);
+}
+
+/* -- Puces informatives -- */
+.jerseyFeatures {
+    grid-area: features;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    align-self: start;
+}
+
+.featureItem {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+}
+
+.featureIconBox {
+    width: 38px;
+    height: 38px;
+    border-radius: 10px;
+    background: rgba(200, 155, 60, 0.12);
+    border: 1px solid rgba(200, 155, 60, 0.25);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.featureIcon {
+    font-size: 1.1rem;
+    color: var(--c-gold);
+}
+
+.featureLabel {
+    font-size: 0.65rem;
+    color: rgba(255, 255, 255, 0.35);
+    margin: 0;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+}
+
+.featureValue {
+    font-size: 0.95rem;
+    font-weight: 700;
+    color: #fff;
+    margin: 0;
+}
+
+/* ── CORRECTIONS MOBILE ── */
+@media (max-width: 767px) {
+
+    /* 1. Le Layout Global */
+    .jerseyLayout {
+        display: grid;
+        /* On force 2 colonnes : 60% pour l'image, 40% pour le texte */
+        grid-template-columns: 1.2fr 0.8fr;
+        gap: 10px 16px;
+        align-items: center;
+    }
+
+    /* 2. Le Header prend toute la largeur (Ligne 1) */
+    .jerseyHeader {
+        grid-column: 1 / -1;
+        text-align: center;
+        margin-bottom: 10px;
+    }
+
+    /* 3. L'image à gauche (Ligne 2, Colonne 1) */
+    .jerseyVisual {
+        grid-column: 1 / 2;
+        grid-row: 2;
+        min-width: 0;
+        /* Empêche l'image de faire exploser la grille */
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .jerseyImage {
+        /* Hauteur adaptée pour être à côté du texte */
+        height: 100%;
+        width: 100%;
+    }
+
+    /* 4. Les infos à droite (Ligne 2, Colonne 2) */
+    .jerseyFeatures {
+        grid-column: 2;
+        min-width: 0;
+        /* Empêche le texte de faire exploser la grille */
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        justify-content: center;
+        gap: 16px;
+        margin: auto;
+    }
+
+    /* 5. Ajustements des textes pour que ça rentre proprement */
+    .jerseyDesc {
+        margin-bottom: 10px;
+        font-size: 0.95rem;
+    }
+
+    .featureItem {
+        gap: 10px;
+    }
+
+    .featureIconBox {
+        width: 32px;
+        height: 32px;
+        border-radius: 8px;
+    }
+
+    .featureIcon {
+        font-size: 0.95rem;
+    }
+
+    .featureLabel {
+        font-size: 0.55rem;
+        /* Légèrement plus petit pour éviter les retours à la ligne */
+    }
+
+    .featureValue {
+        font-size: 0.85rem;
+    }
+}
+
+/* ── INTERACTIONS DESKTOP ── */
+@media (min-width: 768px) {
+    .gamePanel:hover .gameBg {
+        filter: grayscale(0) brightness(1);
+        transform: scale(1.08);
+    }
+
+    .gamePanel:hover .neonBorder {
+        opacity: 1;
+    }
+
+    .gamePanel:hover .gameLogo {
+        transform: scale(1.1) translateY(-10px);
+    }
+}
+
+/* ── CORRECTIONS MOBILE ── */
+@media (max-width: 767px) {
+
+    /* Le caroussel devient une liste verticale propre */
+    .carouselTrack {
+        width: 100%;
+        height: auto;
+        flex-direction: column;
+        transform: none;
+        /* Annulation du skew global */
+        border-left: none;
+        border-right: none;
+        gap: 0;
+    }
+
+    .gamePanel {
+        height: 160px;
+        /* Hauteur fixe réduite */
+        border-bottom: 1px solid rgba(255, 26, 60, 0.2);
+    }
+
+    .gamePanel:last-child {
+        border-bottom: none;
+    }
+
+    .bgWrapper {
+        inset: 0;
+        transform: none;
+        /* Annulation du skew du background */
+    }
+
+    .gameContent {
+        transform: none;
+        /* Annulation du skew du contenu */
+        padding: 20px;
+        flex-direction: row;
+        /* Icône à gauche, texte à droite */
+        justify-content: space-between;
+        text-align: right;
+        gap: 20px;
+    }
+
+    .gameLogo {
+        height: 60px;
+        margin-bottom: 0;
+    }
+
+    .gameName {
+        font-size: 1.3rem;
+    }
+
+    .gameBg {
+        filter: grayscale(0.2) brightness(0.6);
+    }
+
+    /* Grilles adaptées pour mobile */
+    .twitchGrid {
+        gap: 40px;
+    }
+}

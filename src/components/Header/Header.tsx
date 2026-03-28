@@ -54,7 +54,7 @@ export default function Header() {
             {/* 'nav-link' est globale */}
             <Link href="/#events" className="nav-link">Événements</Link>
             <Link href="/#activities" className="nav-link">Activités</Link>
-            <Link href="/#sponsors" className="nav-link">Partenaires</Link>
+            <Link href="/#partenaires" className="nav-link">Partenaires</Link>
           </nav>
         </div>
 
@@ -136,19 +136,15 @@ export default function Header() {
           </div>
 
           <nav className={styles.drawerNav}>
-            <Link href="/poles/esport" className={`${styles.drawerLink} ${styles.neonText}`}>ESPORT</Link>
+            <Link href="/esport" className={`${styles.drawerLink} ${styles.neonText}`}>ESPORT</Link>
             <Link href="/#events" className={styles.drawerLink}>Événements</Link>
             <Link href="/#activities" className={styles.drawerLink}>Activités</Link>
-            <Link href="/#sponsors" className={styles.drawerLink}>Partenaires</Link>
+            <Link href="/#partenaires" className={styles.drawerLink}>Partenaires</Link>
 
             <div className={styles.divider} style={{ margin: '2rem 0' }} />
 
-            <Link href="/rejoindre" className="btn btn-premium" style={{ width: '100%', marginBottom: '1rem' }}>
-              Nous rejoindre
-            </Link>
-            <Link href="/le-local" className="btn btn-gold" style={{ width: '100%' }}>
-              Réserver le local
-            </Link>
+            <Link href="/rejoindre" className="btn btn-premium">Nous rejoindre</Link>
+            <Link href="/le-local" className="btn btn-gold">Réserver le local</Link>
           </nav>
         </div>
       </div>

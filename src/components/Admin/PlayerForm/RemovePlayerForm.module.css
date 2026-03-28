@@ -1,0 +1,59 @@
+/**
+ * @file @components/Admin/PlayerForm/RemovePlayerForm.module.css
+ * @author Loann Cordel
+ * @date 28/03/2026
+ * @description Styles pour le bouton de suppression de joueur
+ */
+
+/* ── BOUTON SUPPRESSION ADMIN (En "badge" bas à gauche) ── */
+.removeBtn {
+    position: absolute;
+    /* On le cale en bas à gauche */
+    bottom: -1px;
+    /* Chevauche la bordure basse */
+    left: -1px;
+    /* Chevauche la bordure gauche */
+
+    /* Même taille que le badge de lien */
+    width: 36px;
+    height: 36px;
+
+    /* Reset des styles de bouton par défaut */
+    border: none;
+    padding: 0;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.1rem;
+    transition: all 0.3s ease;
+    z-index: 20;
+    /* Priorité pour le clic sur mobile */
+
+    /* LE SECRET : L'arrondi en bas à gauche correspond à celui de la carte (20px).
+       L'arrondi en haut à droite crée l'effet "étiquette" inversé. */
+    border-radius: 0 16px 0 20px;
+
+    /* Couleurs par défaut (Rouge léger) */
+    background: color-mix(in srgb, #ef4444 15%, transparent);
+    color: #ef4444;
+
+    /* Bordures sur les côtés intérieurs pour l'effet de profondeur */
+    border-top: 1px solid color-mix(in srgb, #ef4444 30%, transparent);
+    border-right: 1px solid color-mix(in srgb, #ef4444 30%, transparent);
+}
+
+/* Effet au survol du bouton lui-même (ou de la carte sur PC) */
+.removeBtn:hover:not(:disabled),
+.playerCard:hover .removeBtn:not(:disabled) {
+    background: #dc2626;
+    /* Rouge plein */
+    color: #fff;
+    /* Icône blanche */
+}
+
+/* État désactivé (pendant la suppression) */
+.removeBtn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}

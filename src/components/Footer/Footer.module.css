@@ -1,0 +1,177 @@
+/**
+* @file Footer.module.css
+* @author Loann CORDEL
+* @date 27/03/2026
+* @description Styles pour le composant Footer
+*/
+
+.footer {
+    position: relative;
+    z-index: 20;
+    padding-bottom: 24px;
+}
+
+.mainGrid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 40px;
+    align-items: start;
+    margin-bottom: 20px;
+}
+
+/* Brand Section */
+.brandHeader {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 16px;
+}
+
+.logo {
+    height: 50px;
+    width: auto;
+}
+
+.brandTitle {
+    font-family: var(--font-heading);
+    font-size: 1.25rem;
+    font-weight: 900;
+    color: var(--c-gold);
+    letter-spacing: 0.05em;
+    margin: 0;
+}
+
+.tagline {
+    color: var(--c-grey-medium);
+    font-size: 0.9rem;
+}
+
+/* Sections communes */
+.sectionTitle {
+    font-weight: 800;
+    color: var(--c-bordeaux);
+    margin-bottom: 12px;
+}
+
+/* Socials */
+.socialsWrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
+}
+
+.socialsList {
+    display: flex;
+    gap: 1em;
+}
+
+.iconSize {
+    font-size: 1.25rem;
+}
+
+/* Contacts */
+.contactWrapper {
+    text-align: right;
+}
+
+.contactText {
+    color: var(--c-grey-medium);
+    margin-bottom: 4px;
+}
+
+.address {
+    color: var(--c-grey-medium);
+    font-size: 0.85rem;
+    line-height: 1.4;
+}
+
+/* Partners Strip */
+.partnersStrip {
+    margin-top: 20px;
+    padding-top: 24px;
+    border-top: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+.partnersTitle {
+    text-align: center;
+    font-size: 0.65rem;
+    font-weight: 800;
+    color: var(--c-grey-medium);
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    margin-bottom: 16px;
+}
+
+.partnersList {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    /* Distribution égale sur toute la largeur */
+    flex-wrap: nowrap;
+    /* Force l'affichage sur une seule ligne */
+    gap: 15px;
+    /* Espace réduit pour le mobile */
+    width: 100%;
+}
+
+.partnerLogo {
+    /* La hauteur devient la limite maximale, mais la largeur est prioritaire pour le rétrécissement */
+    height: auto;
+    max-height: 3em;
+
+    /* Propriétés critiques pour le rétrécissement fluide */
+    width: 100%;
+    max-width: 20%;
+    /* Empêche un logo d'être plus large que 1/5ème du conteneur */
+    object-fit: contain;
+    /* Préserve le ratio d'aspect sans déformation */
+    flex-shrink: 1;
+    /* Autorise l'élément à réduire sa taille si nécessaire */
+}
+
+.copyright {
+    text-align: center;
+    font-size: 0.65rem;
+    font-weight: 800;
+    color: var(--c-grey-medium);
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    margin: 16px 0;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .brandWrapper {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+    }
+
+    .brandHeader {
+        justify-content: center;
+    }
+
+    .mainGrid {
+        grid-template-columns: 1fr;
+    }
+
+    .contactWrapper {
+        text-align: center;
+    }
+
+    .socialsWrapper {
+        align-items: center;
+    }
+
+    .partnersList {
+        gap: 8px;
+        /* On réduit encore l'écart pour gagner de l'espace */
+    }
+
+    .partnerLogo {
+        max-height: 2.2em;
+        /* On réduit légèrement la hauteur pour compenser l'étroitesse */
+    }
+}
