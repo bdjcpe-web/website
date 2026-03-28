@@ -1,11 +1,12 @@
 /**
  * @file src/app/esport/page.tsx
  * @author Loann Cordel
- * @date 27/03/2026
+ * @date 28/03/2026
  * @description Page esport avec présentation des équipes, des ligues
  * du maillot et widget twitch
  * @requires data/esport.ts
  */
+
 
 import { esportGames, MONTHS, LEAGUES, JERSEY_FEATURES, TWITCH_FEATURES } from '@/data/esport';
 import { reseaux } from '@/data/reseaux';
@@ -92,12 +93,12 @@ export default function EsportPage() {
 
             {/* Partie Gauche : Textes harmonisés */}
             <div className={styles.infoContent}>
-              <header className={styles.Header} style={{ textAlign: 'left', marginBottom: '30px' }}>
+              <header className={styles.Header}>
                 <p className={styles.carouselSub}>Suis l'actualité</p>
                 <h2 className={styles.carouselTitle}>
                   BDJ <span className={styles.highlight}>Esport</span>
                 </h2>
-                <p className={styles.carouselDesc} style={{ marginBottom: 0, textAlign: 'left' }}>
+                <p className={styles.carouselDesc}>
                   Affronte les meilleures écoles de France sous nos couleurs dans les ligues et LANs nationales.
                 </p>
               </header>

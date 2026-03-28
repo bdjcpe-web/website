@@ -1,0 +1,250 @@
+/**
+ * @file src/components/Auth/AuthLayout.module.css
+ * @author Loann Cordel - Président du BDJ
+ * @date 28/03/2026
+ * @architecture Client Component
+ * @description Styles CSS pour les pages d'authentification du site du BDJ CPE Lyon.
+ */
+
+.pageWrapper {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 140px 20px 60px;
+    background-color: #fff;
+    position: relative;
+    overflow: hidden;
+}
+
+/* ── DÉCORATIONS DE FOND ── */
+.bgDecor1 {
+    position: fixed;
+    top: 10%;
+    right: -10%;
+    width: 600px;
+    height: 600px;
+    background: var(--c-bordeaux);
+    opacity: 0.03;
+    filter: blur(100px);
+    border-radius: 50%;
+}
+
+.bgDecor2 {
+    position: fixed;
+    bottom: 10%;
+    left: -10%;
+    width: 500px;
+    height: 500px;
+    background: var(--c-gold);
+    opacity: 0.05;
+    filter: blur(80px);
+    border-radius: 50%;
+}
+
+/* ── CARTE LAYOUT ── */
+.cardContainer {
+    position: relative;
+    z-index: 10;
+    width: 100%;
+    max-width: 440px;
+}
+
+.cardInner {
+    background: #fff;
+    border-radius: 40px;
+    padding: 50px;
+    border: 1.5px solid var(--auth-main);
+    box-shadow: 0 30px 60px rgba(0, 0, 0, 0.10);
+}
+
+.header {
+    text-align: center;
+    margin-bottom: 40px;
+}
+
+.iconBox {
+    width: 80px;
+    height: 80px;
+    background: var(--auth-main);
+    border-radius: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 25px;
+    box-shadow: 0 10px 30px var(--auth-shadow);
+}
+
+.iconBox i {
+    font-size: 2.5rem;
+    color: #fff;
+}
+
+.title {
+    font-size: 2rem;
+    font-weight: 900;
+    color: #000;
+    margin: 0;
+    font-family: var(--font-heading);
+}
+
+.subtitle {
+    color: var(--c-grey-medium);
+    font-size: 0.95rem;
+    margin-top: 10px;
+}
+
+/* ── PIED DE CARTE & RETOUR ── */
+.footer {
+    text-align: center;
+    margin-top: 30px;
+}
+
+.footerText {
+    font-size: 0.9rem;
+    color: var(--c-grey-medium);
+}
+
+.footerLink {
+    font-size: 0.9rem;
+    color: var(--auth-main);
+    font-weight: 700;
+    text-decoration: none;
+    margin-left: 5px;
+}
+
+.footerLink:hover {
+    text-decoration: underline;
+}
+
+.backWrapper {
+    text-align: center;
+    margin-top: 30px;
+}
+
+.backLink {
+    font-size: 0.85rem;
+    color: var(--c-grey-medium);
+    text-decoration: none;
+    font-weight: 600;
+    transition: color 0.2s;
+}
+
+.backLink:hover {
+    color: #000;
+}
+
+/* ── ÉLÉMENTS DE FORMULAIRE ── */
+.form {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.row {
+    display: flex;
+    gap: 10px;
+}
+
+.inputGroup {
+    position: relative;
+    width: 100%;
+}
+
+.inputIcon {
+    position: absolute;
+    left: 20px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--c-grey-medium);
+    font-size: 1.2rem;
+    pointer-events: none;
+    z-index: 1;
+}
+
+.input {
+    width: 100%;
+    padding: 16px 20px;
+    background: #f9f9f9;
+    border: 1px solid rgba(0, 0, 0, 0.05);
+    border-radius: 18px;
+    font-size: 0.95rem;
+    outline: none;
+    transition: all 0.3s;
+    color: #111;
+    appearance: none;
+}
+
+/* Variante si l'input a une icône à gauche */
+.inputWithIcon {
+    padding-left: 55px;
+}
+
+.input::placeholder {
+    color: #9ca3af;
+}
+
+.input:focus {
+    background: #fff;
+    border-color: var(--auth-main);
+    box-shadow: 0 0 0 4px var(--auth-focus);
+}
+
+.select {
+    cursor: pointer;
+}
+
+.statusError {
+    color: #ff1a3c;
+    font-size: 0.85rem;
+    font-weight: 600;
+    margin: 5px 0;
+}
+
+.statusSuccess {
+    color: var(--c-gold);
+    font-size: 0.85rem;
+    font-weight: 600;
+    margin: 5px 0;
+}
+
+.submitBtn {
+    margin-top: 10px;
+    width: 100%;
+}
+
+/* Nouvelle classe à appliquer sur l'input de mot de passe spécifiquement */
+.passwordInput {
+    padding-right: 50px;
+    /* Réserve de l'espace sur la droite pour l'icône œil */
+}
+
+/* Le bouton cliquable contenant l'icône œil */
+.passwordToggle {
+    position: absolute;
+    right: 15px;
+    /* Aligné sur la droite */
+    top: 50%;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    padding: 0;
+    cursor: pointer;
+    color: var(--c-grey-medium);
+    transition: color 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 2;
+    /* S'assure qu'il est cliquable au-dessus de l'input */
+    outline: none;
+}
+
+.passwordToggle i {
+    font-size: 1.2rem;
+}
+
+/* Effet au survol du bouton oeil */
+.passwordToggle:hover {
+    color: var(--auth-main);
+}

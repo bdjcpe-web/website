@@ -20,7 +20,7 @@ import { getUpcomingEvents } from '@/lib/calendar';
 import { activites } from '@/data/activites';
 
 // components
-import Hero from '@/components/Hero/HomeHero/HomeHero';
+import Hero from '@/components/Hero/HomeHero';
 import EventCard from '@/components/EventCard/EventCard';
 import BentoGrid from '@/components/BentoGrid/BentoGrid';
 

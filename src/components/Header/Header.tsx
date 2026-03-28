@@ -66,12 +66,22 @@ export default function Header() {
             <Link href="/le-local" className="btn btn-gold">Réserver le local</Link>
           </div>
 
-          <Link href="/cotisation" className={styles.crownCta} title="Devenir membre">
-            <i className="ph-fill ph-crown" />
-            <span className={styles.desktopOnly}>
-              {!session?.user?.isMember ? 'Avantages Membre' : 'Devenir Membre'}
-            </span>
-          </Link>
+          {/* ── CTA COURONNE ── */}
+          {!session?.user?.isMember ? (
+            <Link href="/cotisation" className={styles.crownCta} title="Devenir membre">
+              <i className="ph-fill ph-crown" />
+              <span className={styles.desktopOnly}>
+                Devenir Membre
+              </span>
+            </Link>
+          ) : (
+            <Link href="/cotisation" className={styles.crownCta} title="Avantages Membre">
+              <i className="ph-fill ph-crown" />
+              <span className={styles.desktopOnly}>
+                Avantages Membre
+              </span>
+            </Link>
+          )}
 
           <div
             className={styles.profileWrapper}
@@ -101,10 +111,14 @@ export default function Header() {
                   ) : (
                     <>
                       <Link href="/profil" className={styles.navDropdownItem}>Mon Profil</Link>
-                      <Link href="/cotisation" className={`${styles.navDropdownItem} ${styles.goldText}`}>Devenir Membre</Link>
+                      {!session?.user?.isMember ? (
+                        <Link href="/cotisation" className={`${styles.navDropdownItem} ${styles.goldText}`}>Devenir Membre</Link>
+                      ) : (
+                        <Link href="/cotisation" className={`${styles.navDropdownItem} ${styles.goldText}`}>Avantages Membre</Link>
+                      )}
                       <Link href="/le-local" className={styles.navDropdownItem}>Le Local</Link>
                       <div className={styles.divider} />
-                      <button onClick={() => signOut()} className={`${styles.navDropdownItem} ${styles.logoutBtn}`}>Déconnexion</button>
+                      <button onClick={() => signOut()} className={`${styles.navDropdownItem} ${styles.logoutBtn}`}><i className="ph ph-sign-out" /> Déconnexion</button>
                     </>
                   )}
                 </div>
