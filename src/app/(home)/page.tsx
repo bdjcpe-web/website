@@ -27,6 +27,8 @@ import BentoGrid from '@/components/BentoGrid/BentoGrid';
 // styles imports
 import styles from './Home.module.css';
 
+export const revalidate = 300; // Cache la page pendant 5 minutes
+
 export default async function HomePage() {
   // Récupération des 3 prochains événements
   const nextThreeEvents = await getUpcomingEvents(3);

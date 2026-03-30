@@ -15,6 +15,8 @@ export const metadata = {
   description: 'Tous les événements du Bureau des Jeux.',
 };
 
+export const revalidate = 300; // Cache la page pendant 5 minutes
+
 export default async function EvenementsPage() {
   const allEvents = await getAllParsedEvents();
 
