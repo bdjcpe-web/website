@@ -121,8 +121,10 @@ function processEvents(events: any[]) {
       }
     }
 
-    // NETTOYAGE GÉNÉRAL : On enlève le reste du HTML (saut de ligne, etc.)
+    // Suppression du reste du HTML
     let cleanDesc = rawDesc.replace(/(<([^>]+)>)/gi, "").trim();
+    // Suppression de la balise [MAX:XX]
+    cleanDesc = cleanDesc.replace(/\[MAX:\d+\]/gi, '').trim();
 
     const t = (e.title || '').toLowerCase();
     let color = 'var(--c-bordeaux)';
