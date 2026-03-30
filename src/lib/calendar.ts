@@ -6,10 +6,17 @@
  * @description Fonctions pour récupérer les données du calendrier Google et extraire les liens HelloAsso.
  */
 
+import { activites } from "@/data/activites";
+
 export async function getEventsData() {
   try {
-    const res = await fetch(`https://calendar.google.com/calendar/ical/bdj.cpe%40gmail.com/public/basic.ics?t=${Date.now()}`, {
-      cache: 'no-store'
+    const url = process.env.CALENDAR_URL;
+    if (!url) {
+      console.error("CALENDAR_URL is not defined");
+      return [];
+    }
+    const res = await fetch(url, {
+      next: { revalidate: 300 }
     });
     if (!res.ok) return [];
 
@@ -124,13 +131,15 @@ function processEvents(events: any[]) {
 
     const t = (e.title || '').toLowerCase();
     let color = 'var(--c-bordeaux)';
-    if (t.includes('jdr') || t.includes('jeu de rôle') || t.includes('société') || t.includes('plateau')) color = 'var(--c-jdr)';
-    else if (t.includes('poker') || t.includes('cartes')) color = 'var(--c-poker)';
-    else if (t.includes('sortie') || t.includes('bar') || t.includes('laser') || t.includes('bowling')) color = 'var(--c-sorties)';
-    else if (t.includes('minecraft') || t.includes('mc') || t.includes('gaming') || t.includes('jeux vidéo')) color = 'var(--c-gaming)';
-    else if (t.includes('local') || t.includes('d016') || t.includes('permanence')) color = 'var(--c-local)';
-    else if (t.includes('esport') || t.includes('lol') || t.includes('league of legends') || t.includes('valo') || t.includes('valorant') || t.includes('rl') || t.includes('rocket league') || t.includes('cs2') || t.includes('smash') || t.includes('ssbu')) color = '#e63946';
+    // On cherche la première activité dont un des mots-clés est dans le titre
+    for (const activite of activites) {
+      const match = activite.keywords.some(keyword => t.includes(keyword.toLowerCase()));
 
+      if (match) {
+        color = activite.color;
+        break; // On a trouvé, on arrête de chercher !
+      }
+    }
     const timeStrStart = e.hasTime
       ? e.date.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit', timeZone: 'Europe/Paris' })
       : null;
