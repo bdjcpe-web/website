@@ -69,6 +69,17 @@ Prisma est notre pont (**Object-Relational Mapping**) vers la base de données. 
 
 ---
 
+## 🎨 Design System & UI
+
+Le site utilise un design system complet et cohérent, basé sur des variables CSS globales et des composants réutilisables.
+
+### Variables CSS
+Les variables CSS sont définies dans `src/app/global.css` et sont utilisées dans toute l'application.
+
+### Composants UI
+Les composants UI sont définis dans `src/components/` et sont utilisés dans toute l'application.
+
+---
 ## 🔐 Sécurité & Authentification (NextAuth)
 
 Le système repose sur **NextAuth.js** pour une authentification sécurisée et sans friction :
@@ -76,6 +87,22 @@ Le système repose sur **NextAuth.js** pour une authentification sécurisée et 
 - **Stratégie JWT** : Les sessions sont gérées via des tokens chiffrés stockés dans des cookies `httpOnly`, protégeant l'application contre les failles XSS.
 - **Callbacks** (`src/lib/auth.ts`) : Nous enrichissons le token avec des données métier (ex: le rôle `isAdmin` ou le statut `isMember`).
 - **Protection des Routes** : Les composants serveurs et les API routes critiques vérifient systématiquement la validité de la session via `getServerSession()`.
+
+---
+
+## 🎟️ Billetterie & Événements (HelloAsso + Google Calendar)
+
+Le site intègre un système de billetterie complet 100% automatisé :
+- **Synchronisation Google Calendar** : Les événements remontent tout seuls sur le site.
+- **Paiement HelloAsso** : Création d'un lien de paiement dynamique (avec tarifs préférentiels automatiques pour les membres).
+- **QR Codes** : Génération de billets numériques uniques dans le profil de l'étudiant.
+- **Application Staff** : Page de scan sécurisée (`/admin/scan`) pour valider les entrées le jour J.
+
+---
+
+### 📚 Comment ajouter un événement ?
+Un guide complet a été rédigé pour les membres du bureau afin de créer un événement de A à Z (Google Calendar, HelloAsso, Mots-clés, Jauge de places...).
+👉 **[Consulter le guide de création d'événement (ADD-EVENT.md)](./ADD-EVENT.md)**
 
 ---
 

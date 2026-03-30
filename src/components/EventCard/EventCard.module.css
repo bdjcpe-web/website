@@ -38,6 +38,72 @@
     filter: grayscale(40%);
 }
 
+/* ── GESTION DU LIEN GLOBAL ── */
+.cardLink {
+    text-decoration: none;
+    display: block;
+    color: inherit;
+    /* Empêche le hover bleu par défaut des navigateurs */
+    outline: none;
+}
+
+/* ── COIN & FLÈCHE HELLOASSO ── */
+.corner {
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 50px;
+    height: 50px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 10;
+    border-left: 1px solid var(--theme-color);
+    border-bottom: 1px solid var(--theme-color);
+    /* On arrondit pour épouser la carte (20px) et on fait un bel arrondi intérieur */
+    border-top-right-radius: 18px;
+    border-bottom-left-radius: 24px;
+    /* Important : cache ce qui déborde du cercle de fond */
+    overflow: hidden;
+}
+
+/* Le fond coloré qui grandit au hover */
+.corner::before {
+    content: '';
+    position: absolute;
+    top: -20px;
+    right: -20px;
+    width: 100px;
+    height: 100px;
+    background-color: var(--theme-color);
+    border-radius: 50%;
+    transform: scale(0);
+    transform-origin: center;
+    transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    z-index: -1;
+}
+
+/* L'icône flèche */
+.arrowIcon {
+    color: var(--theme-color);
+    font-size: 1.4rem;
+    transition: color 0.3s ease, transform 0.3s ease;
+    /* Petit décalage initial pour la placer parfaitement */
+    transform: translate(4px, -4px);
+}
+
+/* ── ANIMATIONS AU SURVOL DE LA CARTE ── */
+.card:hover .corner::before {
+    transform: scale(1);
+}
+
+.card:hover .arrowIcon {
+    /* La flèche devient blanche pour contraster avec le fond rempli */
+    color: var(--c-white, #fff);
+    /* Elle s'anime vers le haut à droite avec un léger rebond */
+    transform: translate(6px, -6px) scale(1.1);
+}
+
 /* ── DATE ── */
 .dateBox {
     grid-area: date;
@@ -98,6 +164,11 @@
     gap: 4px;
     color: var(--c-grey-medium);
     font-size: 0.85rem;
+}
+
+.metaGroup {
+    display: flex;
+    gap: 12px;
 }
 
 .metaItem {

@@ -79,7 +79,7 @@ export default async function HomePage() {
 
           {/* Le conteneur du Bento Grid gère l'espacement supérieur si besoin */}
           <div className={styles.bentoSection}>
-            <BentoGrid activities={activites} />
+            <BentoGrid activities={activites.filter((activity) => !activity.hidden)} />
           </div>
         </div>
       </section>

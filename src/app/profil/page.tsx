@@ -30,6 +30,8 @@ import MemberCard from '@/components/MemberCard/MemberCard';
 import AdminDashboard from '@/components/Admin/Dashboard/AdminDashboard';
 import styles from './Profil.module.css';
 import CancelBookingButton from '@/components/CancelBookingButton';
+import { getAllParsedEvents } from '@/lib/calendar';
+import TicketCard from '@/components/TicketCard/TicketCard';
 
 export default async function ProfilPage() {
   const session = await getServerSession(authOptions);
@@ -38,13 +40,35 @@ export default async function ProfilPage() {
 
   const user = await prisma.user.findUnique({
     where: { email: session.user.email! },
-    include: { bookings: { orderBy: { date: 'asc' } } }
+    include: {
+      bookings: { orderBy: { date: 'asc' } },
+      tickets: { orderBy: { createdAt: 'desc' } }
+    }
   });
 
   if (!user) redirect('/login');
 
   const adminEmails = (process.env.ADMIN_EMAILS || "").split(',').map(e => e.trim().toLowerCase());
   const isAdmin = session?.user?.email && adminEmails.includes(session.user.email.toLowerCase());
+
+  // On récupère tous les événements du calendrier
+  const calendarEvents = await getAllParsedEvents();
+
+  // On associe chaque ticket à son événement Google Calendar
+  const enrichedTickets = user.tickets.map(ticket => {
+    const eventInfo = calendarEvents.find((e: any) => e.helloAssoSlug === ticket.eventSlug);
+    return { ...ticket, eventInfo };
+  })
+    .filter(t => t.eventInfo) // On retire les billets dont l'événement n'existe plus
+    .sort((a, b) => {
+      // On trie les billets exactement dans le même ordre que le calendrier Google
+      const indexA = calendarEvents.findIndex((e: any) => e.helloAssoSlug === a.eventSlug);
+      const indexB = calendarEvents.findIndex((e: any) => e.helloAssoSlug === b.eventSlug);
+      return indexA - indexB;
+    });
+
+  const upcomingTickets = enrichedTickets.filter(t => !t.eventInfo.isPast);
+  const pastTickets = enrichedTickets.filter(t => t.eventInfo.isPast);
 
   let bookings: any[] = [];
   if (isAdmin) {
@@ -157,6 +181,39 @@ export default async function ProfilPage() {
                       </footer>
                     </article>
                   ))}
+                </div>
+              )}
+            </section>
+            {/* ── MES BILLETS D'ÉVÉNEMENTS ── */}
+            <section className={styles.box}>
+              <header className={styles.resHeader}>
+                <i className={`ph ph-ticket ${styles.resHeaderIcon}`} aria-hidden="true" />
+                <h2 className={styles.resTitle}>MES BILLETS</h2>
+              </header>
+
+              {upcomingTickets.length === 0 && pastTickets.length === 0 ? (
+                <div className={styles.resEmpty}>
+                  <p style={{ color: 'var(--c-grey-medium)', margin: '0 0 16px' }}>Tu n'as aucun billet pour le moment.</p>
+                  <Link href="/evenements" className="btn btn-premium">Voir les événements</Link>
+                </div>
+              ) : (
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
+                  {/* Billets à venir */}
+                  {upcomingTickets.length > 0 && (
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+                      {upcomingTickets.map(t => <TicketCard key={t.id} ticket={t} event={t.eventInfo} />)}
+                    </div>
+                  )}
+
+                  {/* Historique des billets passés */}
+                  {pastTickets.length > 0 && (
+                    <div>
+                      <h3 style={{ fontSize: '0.9rem', color: 'var(--c-grey-medium)', textTransform: 'uppercase', marginBottom: '16px' }}>Historique</h3>
+                      <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+                        {pastTickets.map(t => <TicketCard key={t.id} ticket={t} event={t.eventInfo} />)}
+                      </div>
+                    </div>
+                  )}
                 </div>
               )}
             </section>

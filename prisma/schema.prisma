@@ -29,6 +29,7 @@ model User {
 
   bookings          Booking[]
   esportPlayers     Player[]
+  tickets           Ticket[]
 }
 
 model Booking {
@@ -70,4 +71,16 @@ model Player {
 model PendingMember {
   email     String   @id @unique
   createdAt DateTime @default(now())
+}
+
+model Ticket {
+  id            String   @id @default(cuid()) // L'ID unique qui servira de QR Code
+  userId        String
+  user          User     @relation(fields: [userId], references: [id])
+  eventSlug     String   // Pour lier le ticket à l'événement HelloAsso/Calendar
+  amount        Int      // Prix en centimes
+  paymentStatus String   @default("PAID")
+  scanned       Boolean  @default(false) // Pour le jour J : savoir si le billet a été validé à l'entrée
+  scannedAt     DateTime?
+  createdAt     DateTime @default(now())
 }

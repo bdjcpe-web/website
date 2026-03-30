@@ -1,3 +1,11 @@
+/**
+ * @file src/components/MemberCard/MemberCard.tsx
+ * @author Loann Cordel - Président du BDJ
+ * @date 29/03/2026
+ * @architecture Client Component
+ * @description Carte de membre du BDJ CPE Lyon avec QR code unique.
+ */
+
 'use client';
 import { useEffect, useState } from 'react';
 import { QRCode } from 'react-qrcode-logo';

@@ -35,7 +35,7 @@ export default function LoginPage() {
     if (result?.error) {
       setStatus({ type: 'error', message: result.error });
     } else {
-      router.push('/le-local');
+      router.push('/');
       router.refresh();
     }
   };

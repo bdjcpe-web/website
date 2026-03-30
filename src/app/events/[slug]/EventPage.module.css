@@ -1,0 +1,207 @@
+/**
+ * @file src/app/events/[slug]/EventPage.module.css
+ * @author Loann Cordel
+ * @date 29/03/2026
+ * @description Styles pour la page d'événement HelloAsso (Thème Clair)
+ */
+
+/* ── LAYOUT DE BASE ── */
+.pageWrapper {
+    background-color: var(--c-white);
+    color: var(--c-grey-dark);
+    min-height: 100vh;
+}
+
+.contentContainer {
+    max-width: 1000px;
+}
+
+/* ── NAVIGATION & EN-TÊTE ── */
+.backLink {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    color: var(--c-bordeaux);
+    margin-bottom: 32px;
+    font-weight: 700;
+}
+
+.eventTitle {
+    text-align: center;
+    margin-bottom: 16px;
+}
+
+.lineDivider {
+    width: 80%;
+    height: 2px;
+    margin-bottom: 16px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.description {
+    text-align: center;
+    margin-bottom: 20px;
+    font-size: 1.1rem;
+    color: var(--c-grey-dark);
+}
+
+/* ── LAYOUT 2 COLONNES (PC) ── */
+.contentSplit {
+    display: grid;
+    /* Crée 2 colonnes égales. Tu peux mettre '1fr 1.2fr' si tu veux la boîte de paiement plus large */
+    grid-template-columns: 1fr 1fr;
+    gap: 40px;
+    align-items: start;
+    /* Empêche les colonnes de s'étirer à la même hauteur si l'une est plus courte */
+    margin-top: 40px;
+}
+
+/* ── TAGS (Billetterie, Membre) ── */
+.metaTags {
+    display: flex;
+    gap: 16px;
+    margin-bottom: 24px;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+.tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: var(--c-grey-light);
+    color: var(--c-grey-dark);
+    padding: 6px 12px;
+    border-radius: 8px;
+    font-size: 0.9rem;
+    font-weight: 600;
+}
+
+.tagGold {
+    background: rgba(240, 196, 37, 0.15);
+    color: var(--c-gold-dark);
+}
+
+.iconBordeaux {
+    color: var(--c-bordeaux);
+}
+
+/* ── INFOS CALENDRIER (Date, Heure, Lieu) ── */
+.infoGrid {
+    display: grid;
+    /* On force l'empilement vertical à gauche sur 2 colonnes */
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+}
+
+.infoCard {
+    border: 1px solid var(--c-theme-color);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+    padding: 10px 15px;
+    border-radius: 16px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    background-color: var(--c-white);
+}
+
+.infoIcon {
+    font-size: 2rem;
+    color: var(--c-bordeaux);
+}
+
+.infoText {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    /* Permet au texte de prendre l'espace dispo (utile pour la jauge) */
+}
+
+.infoLabel {
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    font-weight: 800;
+    color: var(--c-grey-medium);
+    letter-spacing: 0.05em;
+}
+
+.infoValue {
+    font-weight: 800;
+    font-size: 1.05rem;
+    color: var(--c-grey-dark);
+    margin-bottom: 4px;
+    /* Espace avant la jauge */
+}
+
+/* ── LA CARTE DE PLACE (Jauge intégrée dans la carte) ── */
+.gaugeBar {
+    width: 100%;
+    height: 8px;
+    background-color: var(--c-grey-light);
+    border-radius: 100px;
+    overflow: hidden;
+    margin-top: 4px;
+}
+
+/* ── ZONE DE PAIEMENT ── */
+.paymentBox {
+    background: var(--c-white);
+    border: 1px solid var(--c-bordeaux);
+    border-radius: 24px;
+    padding-top: 30px;
+    padding-bottom: 20px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+}
+
+.priceDisplay {
+    font-size: 2.5rem;
+    font-weight: 900;
+    color: var(--c-bordeaux);
+}
+
+.submitButton {
+    font-size: 1.1rem;
+    padding: 16px 32px;
+}
+
+.helperText {
+    margin-top: 16px;
+    font-size: 0.85rem;
+    color: var(--c-grey-medium);
+}
+
+/* ── RESPONSIVE (TÉLÉPHONE) ── */
+@media (max-width: 768px) {
+    .contentSplit {
+        grid-template-columns: 1fr;
+        /* Sur téléphone, on repasse sur 1 seule colonne (empilé) */
+        gap: 24px;
+    }
+
+    .paymentBox {
+        padding: 20px 10px;
+    }
+
+    .priceDisplay {
+        font-size: 2rem;
+    }
+
+    .submitButton {
+        font-size: 1rem;
+        padding: 12px 24px;
+    }
+
+    .infoCard {
+        gap: 10px;
+        padding: 10px;
+    }
+
+    .infoValue {
+        font-size: 0.9rem;
+    }
+
+    .infoLabel {
+        font-size: 0.6rem;
+    }
+}

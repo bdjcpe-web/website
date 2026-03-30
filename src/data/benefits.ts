@@ -16,7 +16,7 @@ export const benefits = [
         icon: 'ph-armchair',
         color: '#8B5E3C',
         title: 'Le Local',
-        desc: 'Réservation prioritaire du local. Même si un non-membre a déjà réservé, tu peux prendre la place jusqu\'à la veille du créneau.'
+        desc: 'Réservation prioritaire du local. Même si un non-membre a déjà réservé, tu peux prendre la place jusqu\'à une semaine à l\'avance.'
     },
     {
         icon: 'ph-dice-five',

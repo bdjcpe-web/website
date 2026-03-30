@@ -1,0 +1,184 @@
+/**
+ * @file src/app/admin/scan/[id]/ScanPage.module.css
+ * @author Loann Cordel
+ * @date 30/03/2026
+ * @description Styles pour l'interface de scan des billets (Vue Staff)
+ */
+
+/* ── LAYOUT GLOBAL ── */
+.pageWrapper {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem;
+    font-family: system-ui, -apple-system, sans-serif;
+    text-align: center;
+}
+
+/* ── LES 4 ÉTATS DE FOND ── */
+.bgDenied {
+    background-color: #f3f4f6;
+}
+
+.bgUnknown {
+    background-color: #fee2e2;
+}
+
+.bgWarning {
+    background-color: #ffedd5;
+}
+
+.bgSuccess {
+    background-color: #dcfce7;
+}
+
+/* ── ICÔNES ── */
+.icon {
+    font-size: 6rem;
+    margin-bottom: 1rem;
+    animation: popIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.iconDenied {
+    color: #4b5563;
+}
+
+.iconUnknown {
+    color: #dc2626;
+}
+
+.iconWarning {
+    color: #ea580c;
+}
+
+.iconSuccess {
+    color: #16a34a;
+}
+
+@keyframes popIn {
+    0% {
+        transform: scale(0.5);
+        opacity: 0;
+    }
+
+    100% {
+        transform: scale(1);
+        opacity: 1;
+    }
+}
+
+/* ── TYPOGRAPHIE ── */
+.title {
+    font-size: 2.5rem;
+    font-weight: 900;
+    margin: 0 0 1rem;
+    text-transform: uppercase;
+    letter-spacing: -0.02em;
+}
+
+.titleDenied {
+    color: #1f2937;
+}
+
+.titleUnknown {
+    color: #dc2626;
+}
+
+.titleWarning {
+    color: #ea580c;
+}
+
+.titleSuccess {
+    color: #16a34a;
+}
+
+.subtitle {
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: #1f2937;
+    margin: 0 0 0.5rem;
+}
+
+.helperText {
+    color: #4b5563;
+    font-size: 1rem;
+    margin-bottom: 2rem;
+}
+
+.timestamp {
+    display: inline-block;
+    background: rgba(0, 0, 0, 0.05);
+    padding: 6px 12px;
+    border-radius: 100px;
+    font-size: 0.9rem;
+    color: #ea580c;
+    font-weight: 700;
+    margin-bottom: 2rem;
+}
+
+/* ── CARTE DE DÉTAILS (Le petit récap) ── */
+.detailsCard {
+    background: #ffffff;
+    border-radius: 20px;
+    padding: 24px;
+    width: 100%;
+    max-width: 400px;
+    text-align: left;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
+}
+
+/* Bordures spécifiques selon l'état */
+.detailsCardWarning {
+    border: 2px solid #fdba74;
+}
+
+.detailsCardSuccess {
+    border: 2px solid #86efac;
+}
+
+.detailRow {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 16px;
+}
+
+.detailRow:last-child {
+    margin-bottom: 0;
+    padding-bottom: 0;
+    border-bottom: none;
+}
+
+.detailLabel {
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    color: #6b7280;
+    font-weight: 800;
+    letter-spacing: 0.05em;
+    margin-bottom: 4px;
+}
+
+.detailValue {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: #111827;
+}
+
+/* ── BOUTONS ── */
+.btnPrimary {
+    display: inline-block;
+    background: #1f2937;
+    color: #ffffff;
+    font-weight: 700;
+    padding: 16px 32px;
+    border-radius: 12px;
+    text-decoration: none;
+    margin-top: 2rem;
+    transition: transform 0.2s, background 0.2s;
+}
+
+.btnPrimary:active {
+    transform: scale(0.95);
+    background: #000000;
+}

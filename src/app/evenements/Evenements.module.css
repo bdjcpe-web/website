@@ -72,7 +72,6 @@
 
     .filtersSection {
         grid-area: filters;
-        position: sticky;
         top: 100px;
     }
 
@@ -243,8 +242,95 @@
     font-weight: bold;
 }
 
+.backLink {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    color: var(--c-bordeaux);
+    margin-bottom: 2rem;
+    font-size: 0.875rem;
+    font-weight: 700;
+}
+
+.filterIcon {
+    color: var(--c-bordeaux);
+}
+
+.filterDivider {
+    border: none;
+    border-top: 1px solid rgba(0, 0, 0, 0.07);
+    margin: 16px 0;
+}
+
+.checkboxLabel {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    cursor: pointer;
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--c-grey-medium);
+    user-select: none;
+    transition: color 0.2s ease;
+}
+
+.checkboxLabel[data-active="true"] {
+    color: var(--c-bordeaux);
+}
+
+.checkboxInput {
+    width: 16px;
+    height: 16px;
+    cursor: pointer;
+    accent-color: var(--c-bordeaux);
+}
+
+.emptyState {
+    text-align: center;
+    padding: 4rem 1rem;
+    background: #f9f9f9;
+    border-radius: 20px;
+    border: 1px dashed rgba(0, 0, 0, 0.1);
+}
+
+.emptyIcon {
+    font-size: 3rem;
+    color: var(--c-grey-medium);
+    display: block;
+    margin: 0 auto 1rem;
+}
+
+.emptyText {
+    color: var(--c-grey-medium);
+    font-size: 1rem;
+    margin: 0;
+}
+
+.calendarIframe {
+    display: block;
+    border-radius: 12px;
+    /* Un petit bonus esthétique pour le calendrier */
+}
+
+.footerInfo {
+    font-size: 0.75rem;
+    text-align: center;
+    color: var(--c-grey-medium);
+    margin-top: 4rem;
+}
+
+.footerLink {
+    text-decoration: underline;
+    color: var(--c-grey-dark);
+    transition: color 0.2s ease;
+}
+
+.footerLink:hover {
+    color: var(--c-bordeaux);
+}
+
 /* Responsive Cards Mobile */
-@media (max-width: 600px) {
+@media (max-width: 768px) {
     .eventCard {
         flex-direction: column;
         align-items: flex-start;

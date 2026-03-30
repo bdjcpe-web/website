@@ -1,9 +1,8 @@
 /**
  * @file src/evenements/page.tsx
  * @author Loann CORDEL
- * @date 27/03/2026
- * @description Page des événements lié au google calandar du BDJ.
- * Intègre un filtre, la liste des cartes d'événements et un widget calendrier.
+ * @date 29/03/2026
+ * @description Page des événements liée au Google Calendar du BDJ.
  */
 
 import Link from 'next/link';
@@ -23,8 +22,8 @@ export default async function EvenementsPage() {
     <div className={styles.pageContainer}>
       <div className="container">
 
-        {/* Bouton de retour */}
-        <Link href="/" style={{ color: 'var(--c-bordeaux)', marginBottom: '2rem', display: 'inline-flex', alignItems: 'center', gap: '8px', fontSize: '0.875rem', fontWeight: 'bold' }}>
+        {/* Bouton de retour propre */}
+        <Link href="/" className={`nav-link ${styles.backLink}`}>
           <i className="ph ph-arrow-left" aria-hidden="true" /> Retour à l'accueil
         </Link>
 
@@ -40,10 +39,17 @@ export default async function EvenementsPage() {
         {/* Logique Client Injectée */}
         <EventListClient events={allEvents} />
 
-        {/* Footer info */}
-        <p style={{ fontSize: '0.75rem', textAlign: 'center', color: '#374151', marginTop: '4rem' }}>
+        {/* Footer info propre */}
+        <p className={styles.footerInfo}>
           Le calendrier est géré via Google Calendar —{' '}
-          <a href="https://calendar.google.com" target="_blank" rel="noopener noreferrer" style={{ textDecoration: 'underline', color: '#6b7280' }}>Voir en plein écran</a>
+          <a
+            href="https://calendar.google.com"
+            target="_blank"
+            rel="noopener noreferrer"
+            className={styles.footerLink}
+          >
+            Voir en plein écran
+          </a>
         </p>
       </div>
     </div>

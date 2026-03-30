@@ -1,8 +1,8 @@
 /**
  * @file EventListClient.tsx
  * @author Loann CORDEL
- * @date 27/03/2026
- * @description 
+ * @date 29/03/2026
+ * @description Affichage et filtrage dynamique des événements
  */
 
 "use client";
@@ -10,23 +10,26 @@
 import React, { useState } from 'react';
 import styles from './Evenements.module.css';
 import EventCard from '@/components/EventCard/EventCard';
-
-const ESPORT_COLOR = '#e63946';
-
-const FILTERS_CONFIG = [
-  { id: 'var(--c-jdr)', label: 'JDR & Société', color: 'var(--c-jdr)' },
-  { id: 'var(--c-poker)', label: 'Poker', color: 'var(--c-poker)' },
-  { id: ESPORT_COLOR, label: 'Esport', color: ESPORT_COLOR },
-  { id: 'var(--c-gaming)', label: 'Gaming / MC', color: 'var(--c-gaming)' },
-  { id: 'var(--c-sorties)', label: 'Sorties', color: 'var(--c-sorties)' },
-  { id: 'var(--c-local)', label: 'Local', color: 'var(--c-local)' },
-];
+import { activites } from '@/data/activites'; // 👈 On importe ta source de vérité !
 
 export default function EventListClient({ events }: { events: any[] }) {
   const [activeFilters, setActiveFilters] = useState<string[]>([]);
   const [showPast, setShowPast] = useState<boolean>(false);
 
-  // Filtrage et tri des événements
+  // 1. GÉNÉRATION DYNAMIQUE DES FILTRES
+  // On se base sur tes activités pour créer les filtres
+  const dynamicFilters = activites.map(act => ({
+    id: act.color,
+    label: act.title,
+    color: act.color
+  }));
+
+  // On s'assure que l'esport est présent (au cas où il ne soit pas encore dans activites)
+  if (!dynamicFilters.some(f => f.id === '#e63946' || f.id === 'var(--c-esport)')) {
+    dynamicFilters.push({ id: '#e63946', label: 'E-Sport', color: '#e63946' });
+  }
+
+  // 2. LOGIQUE DE FILTRAGE
   const filteredEvents = events
     .filter(ev => {
       if (activeFilters.length > 0 && !activeFilters.includes(ev.color)) return false;
@@ -52,7 +55,7 @@ export default function EventListClient({ events }: { events: any[] }) {
         <div className={styles.filterPanel}>
           <div className={styles.filterHeader}>
             <h2 className={styles.filterTitle}>
-              <i className="ph ph-faders" style={{ color: 'var(--c-bordeaux)' }} aria-hidden="true" /> Filtres
+              <i className={`ph ph-faders ${styles.filterIcon}`} aria-hidden="true" /> Filtres
             </h2>
             {activeFilters.length > 0 && (
               <button onClick={() => setActiveFilters([])} className={styles.clearBtn}>
@@ -62,7 +65,7 @@ export default function EventListClient({ events }: { events: any[] }) {
           </div>
 
           <div className={styles.filterGrid}>
-            {FILTERS_CONFIG.map(f => {
+            {dynamicFilters.map(f => {
               const isActive = activeFilters.includes(f.id);
               return (
                 <button
@@ -79,14 +82,14 @@ export default function EventListClient({ events }: { events: any[] }) {
             })}
           </div>
 
-          <hr style={{ border: 'none', borderTop: '1px solid rgba(0,0,0,0.07)', margin: '16px 0' }} />
+          <hr className={styles.filterDivider} />
 
-          <label style={{ display: 'flex', alignItems: 'center', gap: '10px', cursor: 'pointer', fontSize: '0.85rem', fontWeight: 600, color: showPast ? 'var(--c-bordeaux)' : 'var(--c-grey-medium)', userSelect: 'none' }}>
+          <label className={styles.checkboxLabel} data-active={showPast}>
             <input
               type="checkbox"
               checked={showPast}
               onChange={e => setShowPast(e.target.checked)}
-              style={{ width: '16px', height: '16px', cursor: 'pointer', accentColor: 'var(--c-bordeaux)' }}
+              className={styles.checkboxInput}
             />
             Voir les événements passés
           </label>
@@ -97,13 +100,12 @@ export default function EventListClient({ events }: { events: any[] }) {
       <main className={styles.eventsSection}>
         {filteredEvents.length > 0 ? (
           filteredEvents.map((ev: any) => (
-            /* Utilisation propre du composant isolé */
             <EventCard key={ev.id} event={ev} />
           ))
         ) : (
-          <div style={{ textAlign: 'center', padding: '4rem 1rem', background: '#f9f9f9', borderRadius: '20px', border: '1px dashed rgba(0,0,0,0.1)' }}>
-            <i className="ph ph-calendar-blank" style={{ fontSize: '3rem', color: 'var(--c-grey-medium)', display: 'block', margin: '0 auto 1rem' }} aria-hidden="true" />
-            <p style={{ color: 'var(--c-grey-medium)', fontSize: '1rem', margin: 0 }}>Aucun événement ne correspond à ces critères.</p>
+          <div className={styles.emptyState}>
+            <i className={`ph ph-calendar-blank ${styles.emptyIcon}`} aria-hidden="true" />
+            <p className={styles.emptyText}>Aucun événement ne correspond à ces critères.</p>
           </div>
         )}
       </main>
@@ -117,7 +119,7 @@ export default function EventListClient({ events }: { events: any[] }) {
             height="320"
             frameBorder={0}
             scrolling="no"
-            style={{ display: 'block' }}
+            className={styles.calendarIframe}
             title="Calendrier BDJ"
           />
         </div>

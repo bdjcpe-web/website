@@ -1,4 +1,14 @@
-import Link from 'next/link';
+/**
+ * @file src/app/cotisation/page.tsx
+ * @author Loann Cordel - Président du BDJ
+ * @date 28/03/2026
+ * @architecture Client Component
+ * @description Page des avantages de la cotisation du BDJ.
+ * @requires
+ * - 'next-auth' : Pour la gestion de la session.
+ * - '@prisma/client' : Client Prisma pour l'accès à la base de données.
+ */
+
 import { benefits } from '@/data/benefits';
 import styles from './Cotisation.module.css';
 import { getServerSession } from 'next-auth';
