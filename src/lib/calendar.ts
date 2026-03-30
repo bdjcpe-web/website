@@ -123,8 +123,6 @@ function processEvents(events: any[]) {
 
     // Suppression du reste du HTML
     let cleanDesc = rawDesc.replace(/(<([^>]+)>)/gi, "").trim();
-    // Suppression de la balise [MAX:XX]
-    cleanDesc = cleanDesc.replace(/\[MAX:\d+\]/gi, '').trim();
 
     const t = (e.title || '').toLowerCase();
     let color = 'var(--c-bordeaux)';

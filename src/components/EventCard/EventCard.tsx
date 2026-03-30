@@ -33,6 +33,8 @@ export default function EventCard({ event }: EventCardProps) {
         '--theme-color': event.color,
     } as React.CSSProperties;
 
+    const cleanDesc = event.desc?.replace(/\\[MAX:\\d+\\]/gi, '').trim();
+
     const cardContent = (
         <article className={styles.card} style={cardStyles} data-past={event.isPast}>
             {/* Badge "Billetterie" pour les événements HelloAsso */}
@@ -70,7 +72,7 @@ export default function EventCard({ event }: EventCardProps) {
 
                     {event.desc && (
                         <span className={styles.desc}>
-                            {event.desc}
+                            {cleanDesc}
                         </span>
                     )}
                 </div>
