@@ -67,8 +67,8 @@ export default async function ProfilPage() {
       return indexA - indexB;
     });
 
-  const upcomingTickets = enrichedTickets.filter(t => !t.eventInfo.isPast);
-  const pastTickets = enrichedTickets.filter(t => t.eventInfo.isPast);
+  const upcomingTickets = enrichedTickets.filter(t => !t.eventInfo!.isPast);
+  const pastTickets = enrichedTickets.filter(t => t.eventInfo!.isPast);
 
   let bookings: any[] = [];
   if (isAdmin) {
