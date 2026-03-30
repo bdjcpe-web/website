@@ -185,7 +185,7 @@ export default async function ProfilPage() {
               )}
             </section>
             {/* ── MES BILLETS D'ÉVÉNEMENTS ── */}
-            <section className={styles.box}>
+            <section id="tickets" className={styles.box}>
               <header className={styles.resHeader}>
                 <i className={`ph ph-ticket ${styles.resHeaderIcon}`} aria-hidden="true" />
                 <h2 className={styles.resTitle}>MES BILLETS</h2>

@@ -54,7 +54,6 @@ export default function Header() {
             {/* 'nav-link' est globale */}
             <Link href="/#events" className="nav-link">Événements</Link>
             <Link href="/#activities" className="nav-link">Activités</Link>
-            <Link href="/#partenaires" className="nav-link">Partenaires</Link>
           </nav>
         </div>
 
@@ -65,6 +64,11 @@ export default function Header() {
             <Link href="/rejoindre" className="btn btn-premium">Nous rejoindre</Link>
             <Link href="/le-local" className="btn btn-gold">Réserver le local</Link>
           </div>
+
+          <Link href="/profil#tickets" className={styles.ticketBtn}>
+            <i className="ph ph-ticket" />
+            <span>Mes Billets</span>
+          </Link>
 
           {/* ── CTA COURONNE ── */}
           {!session?.user?.isMember ? (

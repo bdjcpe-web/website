@@ -130,7 +130,7 @@ export default function EsportPage() {
                   return (
                     <iframe
                       //parent=bdjcpe.fr donc non disponible en test sur localhost
-                      src={`https://player.twitch.tv/?channel=${channelName}&parent=bdjcpe.fr&autoplay=true`}
+                      src={`https://player.twitch.tv/?channel=${channelName}&parent=www.bdjcpe.fr&autoplay=true`}
                       style={{ width: '100%', aspectRatio: '16/9', border: 'none', display: 'block' }}
                       allowFullScreen
                       title="Stream Twitch BDJ"
