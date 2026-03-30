@@ -10,12 +10,7 @@ import { activites } from "@/data/activites";
 
 export async function getEventsData() {
   try {
-    const url = process.env.CALENDAR_URL;
-    if (!url) {
-      console.error("CALENDAR_URL is not defined");
-      return [];
-    }
-    const res = await fetch(url, {
+    const res = await fetch(`https://calendar.google.com/calendar/ical/bdj.cpe%40gmail.com/public/basic.ics?t=${Date.now()}`, {
       next: { revalidate: 300 }
     });
     if (!res.ok) return [];
