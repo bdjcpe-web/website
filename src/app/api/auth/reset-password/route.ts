@@ -18,9 +18,6 @@ export async function POST(req: Request) {
     try {
         const { token, password } = await req.json();
 
-        console.log("1. Token reçu du frontend :", token);
-        console.log("2. Date actuelle (serveur) :", new Date());
-
         if (!token || !password) {
             return NextResponse.json({ error: 'Données manquantes.' }, { status: 400 });
         }

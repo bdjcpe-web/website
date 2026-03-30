@@ -32,7 +32,7 @@ export async function POST(req: Request) {
             data: { resetToken, resetTokenExpiry },
         });
 
-        const baseUrl = process.env.NEXTAUTH_URL || 'http://localhost:3000';
+        const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000';
         const resetLink = `${baseUrl}/reset-password?token=${resetToken}`;
 
         /* ── Utilisation de la fonction d'envoi d'email ── */
