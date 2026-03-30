@@ -1,5 +1,5 @@
 /**
- * @file page.tsx
+ * @file /src/app/forgot-password/page.tsx
  * @author Loann CORDEL
  * @date 28/03/2026
  * @description Page Forgot Password pour réinitialiser son mot de passe
@@ -19,8 +19,7 @@ export default function ForgotPasswordPage() {
         setStatus({ type: 'loading', message: 'Envoi en cours...' });
 
         try {
-            // ⚠️ À remplacer par ton vrai endpoint API plus tard
-            const res = await fetch('/api/auth/forgot-password', {
+            const res = await fetch('../api/auth/forgot-password', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ email })
@@ -30,7 +29,7 @@ export default function ForgotPasswordPage() {
 
             if (res.ok) {
                 // Message générique pour des raisons de sécurité (ne pas dévoiler si l'email existe ou non)
-                setStatus({ type: 'success', message: 'Si cet email correspond à un compte, un lien de réinitialisation a été envoyé. Vérifie tes spams !' });
+                setStatus({ type: 'success', message: 'Si cet email correspond à un compte, un lien de réinitialisation a été envoyé. Vérifie tes spams ! Le mail peut prendre quelques minutes à arriver.' });
                 setEmail('');
             } else {
                 setStatus({ type: 'error', message: data.error || 'Erreur inconnue.' });

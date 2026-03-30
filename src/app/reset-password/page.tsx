@@ -41,8 +41,7 @@ function ResetPasswordForm() {
         setStatus({ type: 'loading', message: 'Réinitialisation...' });
 
         try {
-            // ⚠️ À remplacer par ton vrai endpoint API plus tard
-            const res = await fetch('/api/auth/reset-password', {
+            const res = await fetch('../api/auth/reset-password', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ token, password })

@@ -88,7 +88,7 @@ export async function POST(req: Request) {
     const finalHtml = buildBdjEmail(`Bienvenue au Bureau des Jeux, ${firstName} ! 🎮`, emailContent);
     await sendEmail(email.toLowerCase(), "🎮 BDJ CPE - Active ton compte étudiant", finalHtml);
 
-    return NextResponse.json({ message: "Compte créé, vérifie tes mails pour l'activer. Penses à regarder tes spams." });
+    return NextResponse.json({ message: "Compte créé, vérifie tes mails pour l'activer ! Le mail peut prendre quelques minutes à arriver, penses à regarder tes spams." });
 
   } catch (error) {
     console.error('Registration error:', error);
