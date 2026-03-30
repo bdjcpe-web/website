@@ -33,7 +33,7 @@ export default function EventCard({ event }: EventCardProps) {
         '--theme-color': event.color,
     } as React.CSSProperties;
 
-    const cleanDesc = event.desc?.replace(/\[MAX:\\d+\]/gi, '').trim();
+    const cleanDesc = event.desc?.replace(/\[MAX:\d+\]/gi, '').trim();
 
     const cardContent = (
         <article className={styles.card} style={cardStyles} data-past={event.isPast}>
