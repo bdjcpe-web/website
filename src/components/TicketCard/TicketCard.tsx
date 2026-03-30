@@ -33,7 +33,7 @@ export default function TicketCard({ ticket, event }: TicketCardProps) {
         status = 'scanned';
         statusText = 'DÉJÀ SCANNÉ';
         statusIcon = 'ph-x-circle';
-        statusColor = '#d21818ff';
+        statusColor = '#fde31fff';
     } else if (event.isPast) {
         status = 'past';
         statusText = 'ÉVÉNEMENT PASSÉ';
