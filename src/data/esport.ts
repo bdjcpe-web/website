@@ -135,7 +135,7 @@ export const esportGames: EsportGame[] = [
       {
         name: 'GIRAUD Loric (4ETI)', role: 'Jungle', Id: 'Ewookiz#EUW',
         profileLink: 'https://www.op.gg/summoners/euw/Ewookiz-EUW',
-        rank: { tier: 'Platinum', division: 'III', lp: 30 },
+        rank: { tier: 'Platinum', division: 'II', lp: 30 },
       },
       {
         name: 'DI GIOVANNI Loris (4ETI)', role: 'Mid', Id: 'Darlio#Zeubi',
