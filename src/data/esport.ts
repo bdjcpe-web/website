@@ -128,32 +128,32 @@ export const esportGames: EsportGame[] = [
     trackerBase: 'https://www.op.gg/summoners/euw/',
     players: [
       {
-        name: 'EL HASSANI Bassim (4ETI)', role: 'Top', Id: 'ELHbss#euw',
+        name: 'Fred (4ETI)', role: 'Top', Id: 'ELHbss#euw',
         profileLink: 'https://www.op.gg/summoners/euw/ELHbss-euw',
         rank: { tier: 'Emerald', division: 'I', lp: 67 },
       },
       {
-        name: 'GIRAUD Loric (4ETI)', role: 'Jungle', Id: 'Ewookiz#EUW',
+        name: 'Loris (4CGP)', role: 'Jungle', Id: 'Ewookiz#EUW',
         profileLink: 'https://www.op.gg/summoners/euw/Ewookiz-EUW',
         rank: { tier: 'Platinum', division: 'II', lp: 30 },
       },
       {
-        name: 'DI GIOVANNI Loris (4ETI)', role: 'Mid', Id: 'Darlio#Zeubi',
+        name: 'Diego (4CGP)', role: 'Mid', Id: 'Darlio#Zeubi',
         profileLink: 'https://www.op.gg/summoners/euw/Darlio-Zeubi',
         rank: { tier: 'Platinum', division: 'I', lp: 16 },
       },
       {
-        name: 'MATHELIN Yann (4ETI)', role: 'ADC', Id: 'Matychoco#EUW',
+        name: 'Mathis (4ETI)', role: 'ADC', Id: 'Matychoco#EUW',
         profileLink: 'https://www.op.gg/summoners/euw/Matychoco-EUW',
         rank: { tier: 'Emerald', division: 'III', lp: 64 },
       },
       {
-        name: 'LE COZ Tugdual (4ETI)', role: 'Support', Id: 'IleErable#666',
+        name: 'Mathis (3ETI)', role: 'Support', Id: 'IleErable#666',
         profileLink: 'https://www.op.gg/summoners/euw/IleErable-666',
         rank: { tier: 'Gold', division: 'IV', lp: 72 },
       },
       {
-        name: 'VIRY Thomas (4ETI)', role: 'Sub', isSub: true, Id: 'VIT madose#EUW',
+        name: 'Raphaël (4CGP)', role: 'Sub', isSub: true, Id: 'VIT madose#EUW',
         profileLink: 'https://www.op.gg/summoners/euw/VIT%20madose-EUW',
         rank: { tier: 'Diamond', division: 'IV', lp: 2 },
       },
