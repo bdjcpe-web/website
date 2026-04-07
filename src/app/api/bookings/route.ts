@@ -100,14 +100,15 @@ export async function GET(req: Request) {
   const isMember = session?.user?.isMember === true;
 
   try {
-    const dateQuery = new Date(dateStr);
-    dateQuery.setHours(0, 0, 0, 0);
+    // Parse local date string (YYYY-MM-DD) without UTC conversion
+    const [year, month, day] = dateStr.split('-').map(Number);
+    const dateQuery = new Date(year, month - 1, day, 0, 0, 0, 0);
 
     const bookings = await prisma.booking.findMany({
       where: {
         date: {
           gte: dateQuery,
-          lt: new Date(dateQuery.getTime() + 24 * 60 * 60 * 1000)
+          lt: new Date(year, month - 1, day + 1, 0, 0, 0, 0)
         }
       },
       select: {
@@ -148,8 +149,9 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "Tu dois obligatoirement accepter le règlement pour réserver le local." }, { status: 400 });
     }
 
-    const reqDate = new Date(date);
-    reqDate.setHours(0, 0, 0, 0);
+    // Parse local date string (YYYY-MM-DD) without UTC conversion
+    const [year, month, day] = date.split('-').map(Number);
+    const reqDate = new Date(year, month - 1, day, 0, 0, 0, 0);
 
     // @ts-ignore
     const userId = session.user.id as string;

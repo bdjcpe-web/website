@@ -32,6 +32,20 @@ interface AdminDashboardProps {
 }
 
 export default function AdminDashboard({ bookings }: AdminDashboardProps) {
+    // On récupère la date et l'heure actuelles
+    const now = new Date();
+
+    // On filtre pour ne garder que les réservations dont la date de fin n'est pas encore passée
+    const activeBookings = bookings.filter(b => {
+        const bookingEndDate = new Date(b.date);
+        // On extrait les heures et minutes de "16:00" par exemple
+        const [hours, minutes] = b.endTime.split(':').map(Number);
+        bookingEndDate.setHours(hours, minutes, 0, 0);
+
+        // On garde la réservation si sa date de fin est supérieure ou égale à maintenant
+        return bookingEndDate >= now;
+    });
+
     return (
         <section className={styles.adminBox}>
             <header className={styles.adminHeader}>
@@ -56,7 +70,7 @@ export default function AdminDashboard({ bookings }: AdminDashboardProps) {
                 </div>
             </div>
 
-            {bookings.length === 0 ? (
+            {activeBookings.length === 0 ? (
                 <div style={{ padding: '40px', textAlign: 'center', background: '#f9f9f9', borderRadius: '24px', color: 'var(--c-grey-medium)' }}>
                     Aucune réservation active.
                 </div>
@@ -71,7 +85,7 @@ export default function AdminDashboard({ bookings }: AdminDashboardProps) {
                             </tr>
                         </thead>
                         <tbody>
-                            {bookings.map(b => (
+                            {activeBookings.map(b => (
                                 <tr key={b.id} className={styles.adminTr}>
                                     <td className={styles.adminTd}>
                                         <span style={{ fontWeight: 800 }}>

@@ -67,9 +67,7 @@ export default async function ProfilPage() {
       return indexA - indexB;
     });
 
-  const upcomingTickets = enrichedTickets.filter(t => !t.eventInfo!.isPast);
-  const pastTickets = enrichedTickets.filter(t => t.eventInfo!.isPast);
-
+const upcomingTickets = enrichedTickets.filter(t => new Date(t.eventInfo!.dateStr) >= new Date());
   let bookings: any[] = [];
   if (isAdmin) {
     bookings = await prisma.booking.findMany({
@@ -169,7 +167,7 @@ export default async function ProfilPage() {
                     <article key={booking.id} className={styles.resCard}>
                       <div className={styles.resCardTop}>
                         <div>
-                          <p className={styles.resDate}>{new Date(booking.date).toLocaleDateString('fr-FR', { weekday: 'long', day: '2-digit', month: 'long' })}</p>
+                          <p className={styles.resDate}>{booking.date.toLocaleDateString('fr-FR', { weekday: 'long', day: '2-digit', month: 'long' })}</p>
                           <p className={styles.resTime}>{booking.startTime} - {booking.endTime}</p>
                         </div>
                         <div className={styles.resIconBox} aria-hidden="true">
@@ -191,29 +189,16 @@ export default async function ProfilPage() {
                 <h2 className={styles.resTitle}>MES BILLETS</h2>
               </header>
 
-              {upcomingTickets.length === 0 && pastTickets.length === 0 ? (
+              {upcomingTickets.length === 0 ? (
                 <div className={styles.resEmpty}>
                   <p style={{ color: 'var(--c-grey-medium)', margin: '0 0 16px' }}>Tu n'as aucun billet pour le moment.</p>
                   <Link href="/evenements" className="btn btn-premium">Voir les événements</Link>
                 </div>
               ) : (
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
-                  {/* Billets à venir */}
-                  {upcomingTickets.length > 0 && (
-                    <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
-                      {upcomingTickets.map(t => <TicketCard key={t.id} ticket={t} event={t.eventInfo} />)}
-                    </div>
-                  )}
-
-                  {/* Historique des billets passés */}
-                  {pastTickets.length > 0 && (
-                    <div>
-                      <h3 style={{ fontSize: '0.9rem', color: 'var(--c-grey-medium)', textTransform: 'uppercase', marginBottom: '16px' }}>Historique</h3>
-                      <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
-                        {pastTickets.map(t => <TicketCard key={t.id} ticket={t} event={t.eventInfo} />)}
-                      </div>
-                    </div>
-                  )}
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+                  {upcomingTickets.map(t => (
+                    <TicketCard key={t.id} ticket={t} event={t.eventInfo!} />
+                  ))}
                 </div>
               )}
             </section>

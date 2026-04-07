@@ -23,7 +23,16 @@ export default function CalendarBooking() {
   const [loading, setLoading] = useState(false);
   const [selectedSlotToBook, setSelectedSlotToBook] = useState<Slot | null>(null);
   const [rulesAccepted, setRulesAccepted] = useState(false);
-  const [rulesRead, setRulesRead] = useState(false);
+  const [rulesItemsChecked, setRulesItemsChecked] = useState<boolean[]>([false, false, false, false, false]);
+
+  const RULES_COUNT = 5;
+  const allRulesChecked = rulesItemsChecked.every(checked => checked);
+
+  const toggleRuleItem = (index: number) => {
+    const newChecked = [...rulesItemsChecked];
+    newChecked[index] = !newChecked[index];
+    setRulesItemsChecked(newChecked);
+  };
 
   // Génération des 14 prochains jours
   const days = Array.from({ length: 14 }).map((_, i) => {
@@ -52,7 +61,7 @@ export default function CalendarBooking() {
         }
       }
 
-      const response = await fetch(`/api/bookings?date=${date.toISOString()}`);
+      const response = await fetch(`/api/bookings?date=${date.toISOString().split('T')[0]}`);
 
       if (response.ok) {
         const bookedItems = await response.json();
@@ -78,7 +87,7 @@ export default function CalendarBooking() {
     if (!selectedDate) return;
     setSelectedSlotToBook(slot);
     setRulesAccepted(false);
-    setRulesRead(false);
+    setRulesItemsChecked([false, false, false, false, false]);
   };
 
   const handleConfirmBooking = async () => {
@@ -86,11 +95,17 @@ export default function CalendarBooking() {
     if (!rulesAccepted) return alert("Tu dois accepter le règlement.");
 
     try {
+      // Convert date to YYYY-MM-DD format (local date, not UTC)
+      const year = selectedDate.getFullYear();
+      const month = String(selectedDate.getMonth() + 1).padStart(2, '0');
+      const day = String(selectedDate.getDate()).padStart(2, '0');
+      const dateStr = `${year}-${month}-${day}`;
+
       const res = await fetch('/api/bookings', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          date: selectedDate.toISOString(),
+          date: dateStr,
           startTime: selectedSlotToBook.startTime,
           endTime: selectedSlotToBook.endTime,
           agreedToRules: rulesAccepted
@@ -237,36 +252,65 @@ export default function CalendarBooking() {
               Créneau : <span className={styles.modalSlotHighlight}>{DAY_NAMES[selectedDate.getDay()]} {selectedDate.getDate()} {MONTH_NAMES[selectedDate.getMonth()]} de {selectedSlotToBook.startTime} à {selectedSlotToBook.endTime}</span>
             </p>
 
-            <div
-              className={styles.rulesScrollArea}
-              onScroll={(e) => {
-                const el = e.currentTarget;
-                if (el.scrollTop + el.clientHeight >= el.scrollHeight - 20) setRulesRead(true);
-              }}
-            >
+            <div className={styles.rulesScrollArea}>
               <ul className={styles.rulesList}>
-                <li><strong>Responsabilité totale :</strong> Tu es <strong className={styles.ruleHighlight}>l'unique responsable</strong> du matériel (consoles, jeux, mobilier, etc.) pendant toute la durée de ton créneau. <strong className={styles.ruleHighlight}>Toute dégradation sera à ta charge.</strong></li>
-                <li><strong>Propreté exigée :</strong> Le local doit être rendu dans un <strong className={styles.ruleHighlight}>état irréprochable</strong>. Du matériel de nettoyage est à votre disposition dans le local.</li>
-                <li><strong>Vérification obligatoire avant départ :</strong> Votre groupe <strong className={styles.ruleHighlight}>ne peut pas quitter le local sans la présence d'un membre du bureau du BDJ</strong> qui effectuera un avis de passage.</li>
-                <li><strong>Fermeture sécurisée :</strong> La porte doit être verrouillée par le membre du bureau du BDJ. <strong className={styles.ruleHighlight}>Tout départ sans vérification préalable sera considéré comme une faute grave.</strong></li>
-                <li><strong>Sanctions :</strong> En cas de dégradation ou non-respect du règlement, <strong className={styles.ruleHighlight}>ton accès sera définitivement révoqué et la commission de discipline de CPE Lyon pourra être saisie.</strong></li>
+                <li onClick={() => toggleRuleItem(0)} style={{ cursor: 'pointer' }}>
+                  <div className={styles.ruleItemTop}>
+                    <span className={styles.ruleCheckbox} data-checked={rulesItemsChecked[0]}>
+                      {rulesItemsChecked[0] && '✓'}
+                    </span>
+                    <strong>Responsabilité totale :</strong>
+                  </div>
+                  <p className={styles.ruleItemDesc}>Tu es <strong className={styles.ruleHighlight}>l'unique responsable</strong> du matériel (consoles, jeux, mobilier, etc.) pendant toute la durée de ton créneau. <strong className={styles.ruleHighlight}>Toute dégradation sera à ta charge.</strong></p>
+                </li>
+                <li onClick={() => toggleRuleItem(1)} style={{ cursor: 'pointer' }}>
+                  <div className={styles.ruleItemTop}>
+                    <span className={styles.ruleCheckbox} data-checked={rulesItemsChecked[1]}>
+                      {rulesItemsChecked[1] && '✓'}
+                    </span>
+                    <strong>Propreté exigée :</strong>
+                  </div>
+                  <p className={styles.ruleItemDesc}>Le local doit être rendu dans un <strong className={styles.ruleHighlight}>état irréprochable</strong>. Du matériel de nettoyage est à votre disposition dans le local.</p>
+                </li>
+                <li onClick={() => toggleRuleItem(2)} style={{ cursor: 'pointer' }}>
+                  <div className={styles.ruleItemTop}>
+                    <span className={styles.ruleCheckbox} data-checked={rulesItemsChecked[2]}>
+                      {rulesItemsChecked[2] && '✓'}
+                    </span>
+                    <strong>Vérification obligatoire avant départ :</strong>
+                  </div>
+                  <p className={styles.ruleItemDesc}>Votre groupe <strong className={styles.ruleHighlight}>ne peut pas quitter le local sans la présence d'un membre du bureau du BDJ</strong> qui effectuera un avis de passage.</p>
+                </li>
+                <li onClick={() => toggleRuleItem(3)} style={{ cursor: 'pointer' }}>
+                  <div className={styles.ruleItemTop}>
+                    <span className={styles.ruleCheckbox} data-checked={rulesItemsChecked[3]}>
+                      {rulesItemsChecked[3] && '✓'}
+                    </span>
+                    <strong>Fermeture sécurisée :</strong>
+                  </div>
+                  <p className={styles.ruleItemDesc}>La porte doit être verrouillée par le membre du bureau du BDJ. <strong className={styles.ruleHighlight}>Tout départ sans vérification préalable sera considéré comme une faute grave.</strong></p>
+                </li>
+                <li onClick={() => toggleRuleItem(4)} style={{ cursor: 'pointer' }}>
+                  <div className={styles.ruleItemTop}>
+                    <span className={styles.ruleCheckbox} data-checked={rulesItemsChecked[4]}>
+                      {rulesItemsChecked[4] && '✓'}
+                    </span>
+                    <strong>Sanctions :</strong>
+                  </div>
+                  <p className={styles.ruleItemDesc}>En cas de dégradation ou non-respect du règlement, <strong className={styles.ruleHighlight}>ton accès sera définitivement révoqué et la commission de discipline de CPE Lyon pourra être saisie.</strong></p>
+                </li>
               </ul>
             </div>
 
-            <p className={styles.scrollHint}>
-              <i className="ph ph-arrow-down" aria-hidden="true" /> Fais défiler jusqu'en bas pour continuer
-            </p>
-
             <label
               className={styles.checkboxLabel}
-              data-read={rulesRead}
               data-accepted={rulesAccepted}
             >
               <input
                 type="checkbox"
                 checked={rulesAccepted}
-                onChange={e => rulesRead && setRulesAccepted(e.target.checked)}
-                disabled={!rulesRead}
+                onChange={e => allRulesChecked && setRulesAccepted(e.target.checked)}
+                disabled={!allRulesChecked}
                 className={styles.checkboxInput}
               />
               <span className={styles.checkboxText}>

@@ -280,7 +280,7 @@
 
 .rulesScrollArea {
     background: #fff1f2;
-    padding: 1.5rem;
+    padding: 1rem;
     border-radius: 16px;
     border: 1px solid rgba(109, 12, 36, 0.1);
     font-size: 0.95rem;
@@ -288,9 +288,12 @@
     overflow-y: auto;
     line-height: 1.7;
     margin-bottom: 1rem;
-    /* Gère la hauteur max sans casser le layout Flex */
-    flex: 1 1 auto;
-    min-height: 150px;
+}
+
+@media (min-width: 640px) {
+    .rulesScrollArea {
+        padding: 1.5rem;
+    }
 }
 
 /* ... Boutons d'action modale ... */
@@ -488,7 +491,7 @@
 
 .modalContent {
     background: #fff;
-    padding: 2.5rem;
+    padding: 2rem 1.5rem;
     border-radius: 24px;
     max-width: 600px;
     width: 100%;
@@ -497,6 +500,12 @@
     flex-direction: column;
     /* Suppression du box-shadow comme demandé */
     box-shadow: none;
+}
+
+@media (min-width: 640px) {
+    .modalContent {
+        padding: 2.5rem;
+    }
 }
 
 .modalHeader {
@@ -536,11 +545,12 @@
 }
 
 .rulesList {
-    padding-left: 20px;
     display: flex;
     flex-direction: column;
     gap: 14px;
     margin: 0;
+    padding-left: 0;
+    list-style: none;
 }
 
 .ruleHighlight {
@@ -567,16 +577,13 @@
     border: 2px solid transparent;
     border-radius: 12px;
     transition: all 0.2s;
-}
-
-.checkboxLabel[data-read="true"] {
     opacity: 1;
     cursor: pointer;
 }
 
-.checkboxLabel[data-read="false"] {
+.checkboxLabel:has(input:disabled) {
     opacity: 0.5;
-    cursor: default;
+    cursor: not-allowed;
 }
 
 .checkboxLabel[data-accepted="true"] {
@@ -584,13 +591,8 @@
     background: rgba(109, 12, 36, 0.02);
 }
 
-.checkboxLabel[data-accepted="false"][data-read="true"] {
+.checkboxLabel[data-accepted="false"] {
     border-color: #e5e7eb;
-    background: transparent;
-}
-
-.checkboxLabel[data-accepted="false"][data-read="false"] {
-    border-color: #f3f4f6;
     background: transparent;
 }
 
@@ -610,4 +612,65 @@
     font-weight: 700;
     color: #111827;
     line-height: 1.4;
+}
+
+/* Checkboxes pour chaque ligne du règlement */
+.rulesList li {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    transition: all 0.2s;
+    padding: 10px;
+    border-radius: 8px;
+}
+
+@media (min-width: 640px) {
+    .rulesList li {
+        padding: 12px;
+    }
+}
+
+.rulesList li:hover {
+    background: #f9fafb;
+}
+
+.ruleItemTop {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.ruleItemDesc {
+    margin: 0;
+    font-size: 0.95rem;
+    color: #374151;
+    line-height: 1.5;
+    padding-left: 0;
+}
+
+.ruleCheckbox {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    width: 28px;
+    height: 28px;
+    border: 2px solid #e5e7eb;
+    border-radius: 50%;
+    background: #ffffff;
+    font-weight: 800;
+    font-size: 0.9rem;
+    color: var(--c-bordeaux);
+    transition: all 0.2s;
+}
+
+.ruleCheckbox[data-checked="true"] {
+    background: var(--c-bordeaux);
+    border-color: var(--c-bordeaux);
+    color: #ffffff;
+}
+
+.ruleCheckbox[data-checked="false"]:hover {
+    border-color: var(--c-bordeaux);
+    background: rgba(109, 12, 36, 0.02);
 }
