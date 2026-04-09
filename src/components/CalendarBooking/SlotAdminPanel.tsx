@@ -121,7 +121,7 @@ export default function SlotAdminPanel({ isAdmin, selectedDate }: AdminPanelProp
     .map(([day, dayData]: [string, any]) => ({
       day: parseInt(day),
       dayName: dayData?.dayName || DAY_NAMES[parseInt(day)],
-      slots: Array.isArray(dayData?.slots) ? dayData.slots.filter(s => s.isActive) : []
+      slots: Array.isArray(dayData?.slots) ? dayData.slots.filter((s: SlotData) => s.isActive) : []
     }))
     .filter(d => d.day >= 1 && d.day <= 5);
 
@@ -144,7 +144,7 @@ export default function SlotAdminPanel({ isAdmin, selectedDate }: AdminPanelProp
                   <div className={styles.dayCardTitle}>{dayName}</div>
                   {daySlotsArray.length > 0 ? (
                     <ul className={styles.slotsList}>
-                      {daySlotsArray.map(slot => (
+                      {daySlotsArray.map((slot: SlotData) => (
                         <li key={slot.id} className={styles.slotItem}>
                           <span className={styles.slotTime}>{slot.startTime}-{slot.endTime}</span>
                           <button
