@@ -84,3 +84,36 @@ model Ticket {
   scannedAt     DateTime?
   createdAt     DateTime @default(now())
 }
+
+/**
+ * 🕐 Créneaux disponibles gérés par admin
+ * dayOfWeek: 1=Lundi, 2=Mardi, 3=Mercredi, 4=Jeudi, 5=Vendredi
+ * isActive: true = visible aux utilisateurs, false = désactivé par admin
+ * Unique sur (dayOfWeek, startTime, endTime) pour éviter les doublons
+ */
+model AvailableSlot {
+  id        String   @id @default(cuid())
+  dayOfWeek Int      // 1-5 (Lun-Ven)
+  startTime String   // "08:00"
+  endTime   String   // "10:00"
+  isActive  Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([dayOfWeek, startTime, endTime])
+}
+
+/**
+ * 📅 Créneaux ponctuels pour une date précise (admin only)
+ * Coexiste avec les AvailableSlots hebdomadaires.
+ * Permet d'ajouter un créneau exceptionnel pour un jour donné.
+ */
+model DateOverrideSlot {
+  id        String   @id @default(cuid())
+  date      DateTime // La date précise (stockée en UTC minuit local)
+  startTime String   // "08:00"
+  endTime   String   // "10:00"
+  createdAt DateTime @default(now())
+
+  @@unique([date, startTime, endTime])
+}

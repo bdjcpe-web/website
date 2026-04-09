@@ -2,21 +2,19 @@
  * @file src/lib/auth.ts
  * @author Loann Cordel - Président du BDJ
  * @date 28/03/2026
- * @architecture Server Component
- * @description Configuration de NextAuth.js pour l'authentification des utilisateurs.
- * @requires
- * - 'next-auth' : Framework d'authentification.
- * - 'next-auth/providers/credentials' : Fournisseur d'authentification par identifiants.
- * - '@prisma/client' : Client Prisma pour l'accès à la base de données.
- * - 'bcryptjs' : Bibliothèque de hachage de mots de passe.
+ * @description Configuration de NextAuth.js pour l'authentification SSR
+ * 
+ * Responsabilités :
+ * - Stratégie d'authentification par email/mot de passe
+ * - Vérification de l'email avant connexion
+ * - Gestion de session avec JWT (optionnel, adaptable)
+ * - Intégration complète avec la BD Prisma
  */
 
 import { NextAuthOptions } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
-import { PrismaClient } from "@prisma/client";
 import bcrypt from "bcryptjs";
-
-const prisma = new PrismaClient();
+import prisma from "@/lib/prisma";
 
 export const authOptions: NextAuthOptions = {
   providers: [

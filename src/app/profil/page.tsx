@@ -2,42 +2,38 @@
  * @file src/app/profil/page.tsx
  * @author Loann Cordel
  * @date 27/03/2026
- * @description Page de profil de l'utilisateur
- * - Affichage des informations de l'utilisateur
- * - Affichage des réservations de l'utilisateur
- * - Affichage de la carte de membre
- * - Affichage des réservations des utilisateurs (admin)
- * - Affichage des membres (admin)
- * - Synchronisation des membres (admin)
- * @requires prisma
- * @requires next-auth
- * @requires @prisma/client
- * @requires next/navigation
- * @requires next/link
- * @requires @/lib/auth
- * @requires @/lib/prisma
- * @requires @/components/MemberCard
- * @requires @/components/Admin/Dashboard/AdminDashboard
- * @requires @/components/CancelBookingButton
+ * @description Page de profil utilisateur (SSR)
+ * 
+ * Sections :
+ * 1. 👤 Infos utilisateur + avatar + statut (membre/non-membre)
+ * 2. 💚 Statut cotisation (CTA si non-membre)
+ * 3. 📅 Réservations du local (avec bouton annulation)
+ * 4. 🎫 Tickets d'événements (billets)
+ * 5. 🎴 Carte de membre (si cotisant)
+ * 6. 🔐 Dashboard admin (si administrateur)
+ * 
+ * 🔐 Sécurité : Nécessite une session valide (sinon redirect /login)
+ * ⚠️ Admin : Affiche aussi toutes les réservations et membres si admin
  */
 
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth';
 import { redirect } from 'next/navigation';
-import prisma from '@/lib/prisma';
 import Link from 'next/link';
+import { getAllParsedEvents } from '@/lib/calendar';
+import prisma from '@/lib/prisma';
 import MemberCard from '@/components/MemberCard/MemberCard';
 import AdminDashboard from '@/components/Admin/Dashboard/AdminDashboard';
-import styles from './Profil.module.css';
 import CancelBookingButton from '@/components/CancelBookingButton';
-import { getAllParsedEvents } from '@/lib/calendar';
 import TicketCard from '@/components/TicketCard/TicketCard';
+import styles from './Profil.module.css';
 
 export default async function ProfilPage() {
+  // 🔐 Vérification de session
   const session = await getServerSession(authOptions);
-
   if (!session || !session.user) redirect('/login');
 
+  // 👤 Récupère les données utilisateur
   const user = await prisma.user.findUnique({
     where: { email: session.user.email! },
     include: {

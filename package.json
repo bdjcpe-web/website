@@ -17,6 +17,7 @@
     "next": "16.2.0",
     "next-auth": "^4.24.11",
     "nodemailer": "^7.0.13",
+    "phosphor-react": "^1.4.1",
     "qrcode.react": "^4.2.0",
     "react": "19.2.4",
     "react-dom": "19.2.4",

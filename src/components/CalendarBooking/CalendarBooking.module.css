@@ -152,9 +152,9 @@
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
     margin-bottom: 1rem;
     flex-wrap: wrap;
-    /* Sécurité mobile */
     gap: 16px;
 }
+
 
 .slotInfo {
     display: flex;
@@ -674,3 +674,145 @@
     border-color: var(--c-bordeaux);
     background: rgba(109, 12, 36, 0.02);
 }
+
+/* ── STYLES ADMIN (créneaux) ── */
+
+/* Wrapper des boutons d'action sur un créneau (Réserver + Annuler admin) */
+.slotActions {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+/* Badge affichant le nom du réservant (admin only) */
+.adminUserBadge {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 0.78rem;
+    font-weight: 600;
+    padding: 3px 10px;
+    border-radius: 100px;
+    background: rgba(245, 158, 11, 0.1);
+    color: #b45309;
+    border: 1px solid rgba(245, 158, 11, 0.3);
+    white-space: nowrap;
+}
+
+/* Bouton admin : Annuler une réservation */
+.adminCancelBtn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 16px;
+    background: #fff1f2;
+    color: #dc2626;
+    border: 1px solid rgba(220, 38, 38, 0.3);
+    border-radius: 8px;
+    font-weight: 700;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    white-space: nowrap;
+}
+
+.adminCancelBtn:hover:not(:disabled) {
+    background: #dc2626;
+    color: #ffffff;
+    border-color: #dc2626;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(220, 38, 38, 0.25);
+}
+
+.adminCancelBtn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+/* Bouton admin : Ajouter un créneau ponctuel sous la liste */
+.adminAddOverrideBtn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 1rem;
+    padding: 10px 20px;
+    background: transparent;
+    color: #059669;
+    border: 2px dashed rgba(5, 150, 105, 0.4);
+    border-radius: 10px;
+    font-weight: 700;
+    font-size: 0.95rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    width: 100%;
+    justify-content: center;
+}
+
+.adminAddOverrideBtn:hover {
+    background: rgba(5, 150, 105, 0.06);
+    border-color: #059669;
+    transform: translateY(-1px);
+}
+
+/* Icône dans la modale admin */
+.adminModalIcon {
+    font-size: 2rem;
+    color: #059669;
+}
+
+/* Message d'erreur dans le modal override */
+.adminOverrideError {
+    background: #fee2e2;
+    color: #dc2626;
+    border-radius: 8px;
+    padding: 0.75rem 1rem;
+    font-size: 0.9rem;
+    font-weight: 600;
+    margin-bottom: 1rem;
+}
+
+/* Formulaire dans les modals admin */
+.formGroup {
+    margin-bottom: 1.5rem;
+}
+
+.formLabel {
+    display: block;
+    font-weight: 600;
+    color: #374151;
+    margin-bottom: 0.5rem;
+    font-size: 0.95rem;
+}
+
+.formSelect {
+    width: 100%;
+    padding: 0.75rem;
+    border: 1px solid #d1d5db;
+    border-radius: 8px;
+    font-size: 0.95rem;
+    font-family: inherit;
+    background: #ffffff;
+}
+
+.formSelect:focus {
+    outline: none;
+    border-color: #059669;
+    box-shadow: 0 0 0 3px rgba(5, 150, 105, 0.1);
+}
+
+/* Mobile admin */
+@media (max-width: 600px) {
+    .slotActions {
+        width: 100%;
+    }
+
+    .adminCancelBtn {
+        width: 100%;
+        justify-content: center;
+    }
+
+    .adminUserBadge {
+        font-size: 0.72rem;
+    }
+}

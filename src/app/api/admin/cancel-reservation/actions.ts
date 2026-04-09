@@ -2,17 +2,34 @@
  * @file src/app/api/admin/cancel-reservation/actions.ts
  * @author Loann Cordel
  * @date 27/03/2026
- * @description Action serveur pour annuler une réservation et notifier l'utilisateur
+ * @description Server Action pour annuler une réservation (admin only)
+ * 
+ * Responsabilités :
+ * - Suppression de la réservation en BD
+ * - Envoi d'email de notification à l'utilisateur
+ * - Rafraîchissement du cache
+ * 
+ * 🔐 Sécurité : Vérification que l'utilisateur est admin OU propriétaire de la réservation
  */
 
 'use server';
 
-import prisma from '@/lib/prisma';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth';
-import { sendEmail, buildBdjEmail } from '@/lib/mail';
 import { revalidatePath } from 'next/cache';
+import { sendEmail, buildBdjEmail } from '@/lib/mail';
+import prisma from '@/lib/prisma';
 
+/**
+ * Annule une réservation et envoie une notification à l'utilisateur
+ * 
+ * @param bookingId - ID unique de la réservation
+ * @returns { error?: string } - Message d'erreur si la requête échoue
+ * 
+ * ⚠️ Accès restreint :
+ * - Admin : peut annuler n'importe quelle réservation
+ * - Utilisateur : peut annuler ses propres réservations (sans email)
+ */
 export async function cancelBookingAndNotify(bookingId: string) {
   const session = await getServerSession(authOptions);
 

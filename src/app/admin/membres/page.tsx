@@ -1,11 +1,15 @@
-import { PrismaClient } from '@prisma/client';
+/**
+ * @file src/app/admin/membres/page.tsx
+ * @description Page d'administration pour la gestion des cotisants
+ * Affiche la liste des membres cotisants et permet la synchronisation
+ */
+
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth';
 import { redirect } from 'next/navigation';
 import Link from 'next/link';
 import SyncButton from './SyncButton';
-
-const prisma = new PrismaClient();
+import prisma from '@/lib/prisma';
 
 export default async function AdminCotisationsPage() {
   const session = await getServerSession(authOptions);

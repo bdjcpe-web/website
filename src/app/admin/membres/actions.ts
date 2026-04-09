@@ -1,11 +1,20 @@
 'use server';
 
-import { PrismaClient } from '@prisma/client';
+/**
+ * @file src/app/admin/membres/actions.ts
+ * @description Server Actions pour la gestion administrative des membres
+ * 
+ * Fonctions :
+ * - Synchronisation des cotisants depuis la source externe
+ * - Mise à jour des statuts de cotisation
+ * 
+ * ⚠️ Toutes ces actions nécessitent un utilisateur administrateur
+ */
+
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth';
 import { revalidatePath } from 'next/cache';
-
-const prisma = new PrismaClient();
+import prisma from '@/lib/prisma';
 
 export async function syncMembersFromGoogleSheet() {
   const session = await getServerSession(authOptions);

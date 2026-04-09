@@ -1,0 +1,305 @@
+/**
+ * @file SlotAdminPanel.module.css
+ * @description Styles pour le panel admin de gestion des créneaux
+ */
+
+/* ── CONTENEUR PRINCIPAL ── */
+.adminPanel {
+    margin-top: 2rem;
+    padding: 1.5rem;
+    background: #f9fafb;
+    border: 1px solid #e5e7eb;
+    border-radius: 16px;
+}
+
+.adminTitle {
+    font-family: var(--font-heading);
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: #111827;
+    margin-bottom: 1.5rem;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.errorMessage {
+    color: #dc2626;
+    font-weight: 600;
+    padding: 0.75rem;
+    background: #fee2e2;
+    border-radius: 8px;
+    margin-bottom: 1rem;
+}
+
+/* ── SECTION CRÉNEAUX PAR DÉFAUT ── */
+.slotsSection {
+    margin-bottom: 2rem;
+}
+
+.sectionTitle {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: #374151;
+    margin-bottom: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.daysGrid {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 1rem;
+}
+
+@media (max-width: 768px) {
+    .daysGrid {
+        grid-template-columns: 1fr;
+    }
+}
+
+.dayCard {
+    background: #ffffff;
+    border: 1px solid #e5e7eb;
+    border-radius: 12px;
+    padding: 1rem;
+}
+
+.dayCardTitle {
+    font-weight: 700;
+    color: #111827;
+    margin-bottom: 0.75rem;
+    font-size: 1.05rem;
+}
+
+.slotsList {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.slotItem {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.75rem;
+    background: #dbeafe;
+    border-radius: 8px;
+    font-size: 0.95rem;
+}
+
+.slotItemInactive {
+    display: none;
+}
+
+.slotTime {
+    font-weight: 500;
+    color: #111827;
+}
+
+.removeBtn {
+    background: #dc2626;
+    color: #ffffff;
+    border: none;
+    padding: 0.35rem 0.65rem;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: background 0.2s ease;
+    font-size: 0.9rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.removeBtn:hover {
+    background: #991b1b;
+}
+
+/* ── SECTION AJOUTER CRÉNEAUX ── */
+.addSlotSection {
+    background: #ffffff;
+    border: 1px solid #e5e7eb;
+    border-radius: 12px;
+    padding: 1.5rem;
+}
+
+.sectionSubtitle {
+    font-size: 1rem;
+    font-weight: 600;
+    color: #374151;
+    margin-bottom: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.buttonGroup {
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+}
+
+.addBtn,
+.addDateBtn,
+.cancelBtn {
+    padding: 0.75rem 1.5rem;
+    border: none;
+    border-radius: 8px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    font-size: 0.95rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.75rem;
+}
+
+.addBtn {
+    background: var(--c-bordeaux);
+    color: #ffffff;
+}
+
+.addBtn:hover {
+    background: #5a0a24;
+}
+
+.addDateBtn {
+    background: #10b981;
+    color: #ffffff;
+}
+
+.addDateBtn:hover {
+    background: #059669;
+}
+
+.cancelBtn {
+    background: #6b7280;
+    color: #ffffff;
+}
+
+.cancelBtn:hover {
+    background: #4b5563;
+}
+
+/* ── MODAL AJOUTER CRÉNEAU ── */
+.modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 1000;
+}
+
+.open {
+    display: flex !important;
+    justify-content: center;
+    align-items: center;
+}
+
+.modalContent {
+    background: #ffffff;
+    border-radius: 12px;
+    padding: 2rem;
+    max-width: 500px;
+    width: 90%;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+}
+
+.modalTitle {
+    font-size: 1.3rem;
+    font-weight: 700;
+    color: #111827;
+    margin-bottom: 1.5rem;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.formGroup {
+    margin-bottom: 1.5rem;
+}
+
+.formLabel {
+    display: block;
+    font-weight: 600;
+    color: #374151;
+    margin-bottom: 0.5rem;
+    font-size: 0.95rem;
+}
+
+.formSelect,
+.formInput {
+    width: 100%;
+    padding: 0.75rem;
+    border: 1px solid #d1d5db;
+    border-radius: 8px;
+    font-size: 0.95rem;
+    font-family: inherit;
+}
+
+.formSelect:focus,
+.formInput:focus {
+    outline: none;
+    border-color: var(--c-bordeaux);
+    box-shadow: 0 0 0 3px rgba(109, 12, 36, 0.1);
+}
+
+.modalActions {
+    display: flex;
+    gap: 1rem;
+    justify-content: flex-end;
+}
+
+.confirmBtn {
+    background: var(--c-bordeaux);
+    color: #ffffff;
+    border: none;
+    padding: 0.75rem 1.5rem;
+    border-radius: 8px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.2s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.75rem;
+}
+
+.confirmBtn:hover {
+    background: #5a0a24;
+}
+
+.closeBtn {
+    background: #e5e7eb;
+    color: #111827;
+    border: none;
+    padding: 0.75rem 1.5rem;
+    border-radius: 8px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.2s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.75rem;
+}
+
+.closeBtn:hover {
+    background: #d1d5db;
+}
+
+/* ── LOADING ── */
+.loading {
+    text-align: center;
+    padding: 2rem;
+    color: #6b7280;
+}

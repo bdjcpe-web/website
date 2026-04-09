@@ -2,35 +2,43 @@
  * @file src/app/api/bookings/route.ts
  * @author Loann Cordel - Président du BDJ
  * @date 28/03/2026
- * @architecture Server Component
- * @description API Route pour la gestion des réservations.
- * @requires
- * - 'next/server' : Pour la gestion des réponses HTTP.
- * - '@prisma/client' : Client Prisma pour l'accès à la base de données.
- * - 'next-auth' : Pour la gestion de la session utilisateur.
- * - 'nodemailer' : Pour l'envoi d'emails.
+ * @description API Route pour la gestion des réservations du local BDJ
+ * 
+ * Responsabilités :
+ * - GET /api/bookings?date=YYYY-MM-DD : Récupère les créneaux pour une date
+ * - POST /api/bookings : Crée une nouvelle réservation avec validations métier
+ * 
+ * Points clés :
+ * - Les dates sont gérées au format local (YYYY-MM-DD) pour éviter les décalages UTC
+ * - Vérifications : 1 réserv active max, 1 par semaine, éviction 7 jours pour membres
+ * - Notifications email automatiques en cas d'éviction ou annulation admin
  */
 
 import { NextResponse } from 'next/server';
-import { PrismaClient } from '@prisma/client';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth';
 import { sendEmail, buildBdjEmail } from '@/lib/mail';
+import prisma from '@/lib/prisma';
+import { getMonday, parseDateLocal, getNextDayStart, getSundayEnd } from '@/lib/date';
+import {
+  EVICTION_DAYS_WINDOW,
+  MAX_ACTIVE_BOOKINGS,
+  MAX_BOOKINGS_PER_WEEK,
+  MESSAGES,
+  EMAIL_CONFIG,
+} from '@/lib/constants';
 
-const prisma = new PrismaClient();
-
-// Fonction utilitaire déplacée en haut
-function getMonday(d: Date) {
-  const date = new Date(d);
-  const day = date.getDay() || 7;
-  if (day !== 1) {
-    date.setHours(-24 * (day - 1));
-  }
-  date.setHours(0, 0, 0, 0);
-  return date;
-}
-
-// ── 1. UTILISATION DU NOUVEAU SYSTÈME DE MAIL (MULTI-CAS) ──
+/**
+ * Envoie un email de notification pour une réservation annulée ou reprise
+ * 
+ * @param toEmail - Email du destinataire
+ * @param firstName - Prénom de l'utilisateur
+ * @param dateFormatted - Date formatée (pour l'email)
+ * @param startTime - Heure de début "HH:MM"
+ * @param endTime - Heure de fin "HH:MM"
+ * @param type - 'override' = repris par un membre, 'admin' = annulé par admin
+ * @param customMessage - Message personnalisé (optionnel, pour les annulations admin)
+ */
 async function sendCancellationEmail(
   toEmail: string,
   firstName: string,
@@ -43,7 +51,7 @@ async function sendCancellationEmail(
   let emailContent = '';
 
   if (type === 'override') {
-    // Cas 1 : Un membre a pris la place d'un non-membre
+    // 📧 Cas 1 : Un membre a pris la place d'un non-membre
     emailContent = `
       <p>Bonjour <strong>${firstName}</strong>,</p>
       <p>
@@ -63,7 +71,7 @@ async function sendCancellationEmail(
       </div>
     `;
   } else {
-    // Cas 2 : Annulation par le Bureau des Jeux (Admin)
+    // 📧 Cas 2 : Annulation par le Bureau des Jeux (Admin)
     emailContent = `
       <p>Bonjour <strong>${firstName}</strong>,</p>
       <p>
@@ -82,14 +90,24 @@ async function sendCancellationEmail(
   emailContent += `<p style="margin-top: 24px;">Ludiquement,<br><strong>L'équipe du Bureau des Jeux</strong></p>`;
 
   const finalHtml = buildBdjEmail("Réservation annulée 🚨", emailContent);
-
   const subject = type === 'override'
-    ? `Ta réservation du Local a été reprise par un membre (${dateFormatted})`
-    : `Annulation de ta réservation du Local (${dateFormatted})`;
+    ? EMAIL_CONFIG.SUBJECT_OVERRIDE(dateFormatted)
+    : EMAIL_CONFIG.SUBJECT_CANCELLATION(dateFormatted);
 
   await sendEmail(toEmail, subject, finalHtml);
 }
 
+/**
+ * GET /api/bookings?date=YYYY-MM-DD
+ * 
+ * Récupère les créneaux (libres/occupés) pour une date donnée
+ * Ajoute un flag 'overridable' pour les créneaux occupés par un non-membre reprenables par un membre
+ * 
+ * @query date - Date au format YYYY-MM-DD (obligatoire)
+ * @returns JSON array de créneaux avec status 'LIBRE' | 'OCCUPE' + flag overridable
+ * @status 400 si date manquante
+ * @status 401 si non authentifié
+ */
 export async function GET(req: Request) {
   const { searchParams } = new URL(req.url);
   const dateStr = searchParams.get('date');
@@ -99,23 +117,29 @@ export async function GET(req: Request) {
   // @ts-ignore
   const isMember = session?.user?.isMember === true;
 
-  try {
-    // Parse local date string (YYYY-MM-DD) without UTC conversion
-    const [year, month, day] = dateStr.split('-').map(Number);
-    const dateQuery = new Date(year, month - 1, day, 0, 0, 0, 0);
+  // 🔐 Vérifie si l'utilisateur est admin
+  const adminEmails = (process.env.ADMIN_EMAILS || '').split(',').map(e => e.trim());
+  const isAdmin = !!(session?.user?.email && adminEmails.includes(session.user.email));
 
+  try {
+    // 📅 Parse la date en format local (critique pour éviter les décalages UTC)
+    const dateQuery = parseDateLocal(dateStr);
+    const nextDayStart = getNextDayStart(dateQuery);
+
+    // 🔍 Récupère toutes les réservations pour ce jour
     const bookings = await prisma.booking.findMany({
       where: {
         date: {
           gte: dateQuery,
-          lt: new Date(year, month - 1, day + 1, 0, 0, 0, 0)
+          lt: nextDayStart
         }
       },
       select: {
+        id: true,
         startTime: true,
         endTime: true,
         status: true,
-        user: { select: { isMember: true } }
+        user: { select: { isMember: true, firstName: true, lastName: true } }
       }
     });
 
@@ -124,34 +148,58 @@ export async function GET(req: Request) {
     const oneWeekFromNow = new Date(now.getTime() + 7 * 24 * 60 * 60 * 1000);
 
     const result = bookings.map(b => ({
+      // 🔐 ID uniquement exposé aux admins (pour permettre l'annulation)
+      ...(isAdmin ? { id: b.id, userName: `${b.user.firstName} ${b.user.lastName}` } : {}),
       startTime: b.startTime,
       endTime: b.endTime,
       status: b.status,
-      // overridable = Le demandeur est membre + Le propriétaire n'est pas membre + C'est à moins de 7 jours !
+      // 🎯 overridable = Le demandeur est membre + Le propriétaire n'est pas membre + C'est à moins de 7 jours
       overridable: isMember && !b.user.isMember && (dateQuery >= oneWeekFromNow),
     }));
 
     return NextResponse.json(result);
   } catch (error) {
+    console.error('[GET /api/bookings]', error);
     return NextResponse.json({ error: "Erreur serveur" }, { status: 500 });
   }
 }
 
+
+/**
+ * POST /api/bookings
+ * 
+ * Crée une nouvelle réservation avec validations métier complexes :
+ * 1. ✋ Vérification du règlement accepté
+ * 2. 💡 Logique d'éviction : un membre peut évincer un non-membre (< 7 jours)
+ * 3. 🚫 Une seule réservation active à la fois
+ * 4. 📅 Maximum 1 par semaine par utilisateur
+ * 5. 📧 Notifications email automatiques en cas d'éviction
+ * 
+ * @body date - Format YYYY-MM-DD (LOCAL, pas UTC)
+ * @body startTime - Format HH:MM
+ * @body endTime - Format HH:MM
+ * @body agreedToRules - Boolean, le checkbox d'acceptation
+ * 
+ * @returns 201 avec la réservation créée
+ * @returns 400 si validation échoue (message explicite)
+ * @returns 401 si non authentifié
+ */
 export async function POST(req: Request) {
   const session = await getServerSession(authOptions);
   // @ts-ignore
-  if (!session?.user?.id) return NextResponse.json({ error: "Non autorisé" }, { status: 401 });
+  if (!session?.user?.id) return NextResponse.json({ error: MESSAGES.UNAUTHORIZED }, { status: 401 });
 
   try {
     const { date, startTime, endTime, agreedToRules } = await req.json();
 
+    // 🔐 Vérification du règlement
     if (!agreedToRules) {
-      return NextResponse.json({ error: "Tu dois obligatoirement accepter le règlement pour réserver le local." }, { status: 400 });
+      return NextResponse.json({ error: MESSAGES.RULES_REQUIRED }, { status: 400 });
     }
 
-    // Parse local date string (YYYY-MM-DD) without UTC conversion
-    const [year, month, day] = date.split('-').map(Number);
-    const reqDate = new Date(year, month - 1, day, 0, 0, 0, 0);
+    // 📅 Parse la date en format local (sans conversion UTC)
+    const reqDate = parseDateLocal(date);
+    const nextDayStart = getNextDayStart(reqDate);
 
     // @ts-ignore
     const userId = session.user.id as string;
@@ -160,31 +208,32 @@ export async function POST(req: Request) {
 
     const existingBooking = await prisma.booking.findFirst({
       where: {
-        date: { gte: reqDate, lt: new Date(reqDate.getTime() + 24 * 60 * 60 * 1000) },
+        date: { gte: reqDate, lt: nextDayStart },
         startTime
       },
       include: { user: { select: { id: true, email: true, firstName: true, isMember: true } } }
     });
 
+    // 🎯 Logique d'éviction : un membre peut évincer un non-membre (< 7 jours)
     if (existingBooking) {
       if (existingBooking.userId === userId) {
-        return NextResponse.json({ error: "Tu as déjà réservé ce créneau." }, { status: 400 });
+        return NextResponse.json({ error: MESSAGES.BOOKING_ALREADY_EXISTS }, { status: 400 });
       }
 
       if (existingBooking.user.isMember) {
-        return NextResponse.json({ error: "Ce créneau est réservé par un membre — il ne peut pas être repris." }, { status: 400 });
+        return NextResponse.json({ error: MESSAGES.BOOKING_RESERVED_BY_MEMBER }, { status: 400 });
       }
 
       if (!callerIsMember) {
-        return NextResponse.json({ error: "Ce créneau vient juste d'être pris par quelqu'un d'autre." }, { status: 400 });
+        return NextResponse.json({ error: MESSAGES.BOOKING_RESERVED_BY_OTHER }, { status: 400 });
       }
 
-      // ── 3. VÉRIFICATION BACKEND DES 7 JOURS POUR L'ÉVICTION ──
+      // ⏱️ Vérification : éviction valide seulement si < 7 jours
       const now = new Date();
-      const oneWeekFromNow = new Date(now.getTime() + 7 * 24 * 60 * 60 * 1000);
+      const oneWeekFromNow = new Date(now.getTime() + EVICTION_DAYS_WINDOW * 24 * 60 * 60 * 1000);
 
       if (reqDate > oneWeekFromNow) {
-        return NextResponse.json({ error: "Tu ne peux évincer un non-membre que si la réservation a lieu dans les 7 prochains jours." }, { status: 400 });
+        return NextResponse.json({ error: MESSAGES.BOOKING_EVICTION_WINDOW_EXCEEDED }, { status: 400 });
       }
 
       // L'éviction est valide
@@ -212,20 +261,19 @@ export async function POST(req: Request) {
     });
 
     if (hasActive) {
-      return NextResponse.json({ error: "Tu as déjà une réservation en attente ou en cours. Une seule à la fois !" }, { status: 400 });
+      return NextResponse.json({ error: MESSAGES.BOOKING_ACTIVE_LIMIT }, { status: 400 });
     }
 
-    // Règle 2: Pas + de 1 / semaine
+    // 📅 Règle 2 : Pas plus d'une réservation par semaine
     const monday = getMonday(reqDate);
-    const sunday = new Date(monday.getTime() + 6 * 24 * 60 * 60 * 1000);
-    sunday.setHours(23, 59, 59, 999);
+    const sunday = getSundayEnd(monday);
 
     const sameWeekBooking = await prisma.booking.findFirst({
       where: { userId, date: { gte: monday, lte: sunday } }
     });
 
     if (sameWeekBooking) {
-      return NextResponse.json({ error: "Pour assurer la rotation des joueurs, tu ne peux pas réserver plus d'une fois par semaine." }, { status: 400 });
+      return NextResponse.json({ error: MESSAGES.BOOKING_WEEKLY_LIMIT }, { status: 400 });
     }
 
     // Créer la réservation
